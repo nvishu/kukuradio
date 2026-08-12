@@ -40,25 +40,29 @@
     position: relative;
   }
 
-  /* ---------- Station background slideshow ---------- */
+  /* ---------- Full-page station background ---------- */
   #station-background {
     position: fixed;
     inset: 0;
-    z-index: -2;
+    width: 100vw;
+    height: 100vh;
     overflow: hidden;
     pointer-events: none;
+    z-index: 0;
     background: var(--bg-deep);
   }
 
   .station-bg-layer {
     position: absolute;
-    inset: -3%;
-    background-position: center;
-    background-size: cover;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background-position: center center;
     background-repeat: no-repeat;
+    background-size: cover;
     opacity: 0;
-    transform: scale(1.06);
-    transition: opacity 1.35s ease, transform 6s ease;
+    transform: scale(1.04);
+    transition: opacity 1.2s ease, transform 3.2s ease;
     will-change: opacity, transform;
   }
 
@@ -70,18 +74,43 @@
   .station-bg-overlay {
     position: absolute;
     inset: 0;
+    z-index: 2;
+    pointer-events: none;
     background:
-      radial-gradient(circle at 50% 35%, rgba(15, 14, 26, 0.18), rgba(15, 14, 26, 0.52) 70%),
-      linear-gradient(180deg, rgba(15, 14, 26, 0.42) 0%, rgba(15, 14, 26, 0.70) 100%);
-    backdrop-filter: blur(1px);
-    -webkit-backdrop-filter: blur(1px);
+      linear-gradient(180deg,
+        rgba(15, 14, 26, 0.42) 0%,
+        rgba(15, 14, 26, 0.28) 40%,
+        rgba(15, 14, 26, 0.58) 100%),
+      radial-gradient(circle at 50% 35%,
+        rgba(15, 14, 26, 0.06) 0%,
+        rgba(15, 14, 26, 0.42) 100%);
   }
 
-  body.has-station-background main {
-    text-shadow: 0 1px 18px rgba(0, 0, 0, 0.22);
+  /* Stars stay above the background but below the UI. */
+  #sky {
+    z-index: 2;
   }
 
-  /* ---------- Ambient sky / particles ---------- */
+  main {
+    z-index: 3;
+  }
+
+  .station-bg-error {
+    position: absolute;
+    left: 50%;
+    bottom: 18px;
+    transform: translateX(-50%);
+    z-index: 3;
+    padding: 8px 12px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.55);
+    color: var(--cream-dim);
+    font: 0.7rem 'Space Mono', monospace;
+    pointer-events: none;
+    display: none;
+  }
+
+  /* ---------- Ambient sky / particles ---------- 
   #sky {
     position: fixed;
     inset: 0;
@@ -258,7 +287,7 @@
     border-radius: 100px;
     padding: 0.5rem 1rem;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.9s ease;
     display: inline-flex;
     align-items: center;
     gap: 0.45rem;
@@ -591,8 +620,10 @@
   <div class="station-bg-layer" id="station-bg-a"></div>
   <div class="station-bg-layer" id="station-bg-b"></div>
   <div class="station-bg-overlay"></div>
+  <div class="station-bg-error" id="station-bg-error">
+    Background image could not be loaded.
+  </div>
 </div>
-
 
 <div id="sky"></div>
 
@@ -686,15 +717,16 @@ const STATIONS = [
   {
     freq: "88.1",
     name: "Late Night",
-    tracks: [],
-    backgroundImages: []
+    backgroundImages: [
+      // Add images later, for example:
+      // "picture/late-night_1.png",
+      // "picture/late-night_2.png"
+    ],
+    tracks: []
   },
   {
     freq: "91.5",
     name: "Missing You",
-    // Add/change images here for this playlist.
-    // Example for another playlist later:
-    // backgroundImages: ["picture/your_1.png", "picture/your_2.png"],
     backgroundImages: [
       "picture/missing_1.png",
       "picture/missing_2.png",
@@ -739,16 +771,22 @@ const STATIONS = [
   {
     freq: "94.7",
     name: "Good Mornings",
-    tracks: [],
-    // Upload images later and put their paths here.
-    backgroundImages: []
+    backgroundImages: [
+      // Add images later:
+      // "picture/good-mornings_1.png",
+      // "picture/good-mornings_2.png"
+    ],
+    tracks: []
   },
   {
     freq: "97.3",
     name: "Slow Dance",
-    tracks: [],
-    // Upload images later and put their paths here.
-    backgroundImages: []
+    backgroundImages: [
+      // Add images later:
+      // "picture/slow-dance_1.png",
+      // "picture/slow-dance_2.png"
+    ],
+    tracks: []
   }
 ];
 /* ========================================================================= */
@@ -776,15 +814,16 @@ const btnPrev = document.getElementById('btn-prev');
 const btnNext = document.getElementById('btn-next');
 const playIcon = document.getElementById('play-icon');
 const volumeSlider = document.getElementById('volume-slider');
-const stationBackground = document.getElementById('station-background');
 const stationBgA = document.getElementById('station-bg-a');
 const stationBgB = document.getElementById('station-bg-b');
+const stationBgError = document.getElementById('station-bg-error');
 
-let backgroundTimer = null;
-let backgroundIndex = 0;
-let backgroundShowingA = true;
-let backgroundRequestId = 0;
-const BACKGROUND_INTERVAL = 3000;
+let bgTimer = null;
+let bgIndex = 0;
+let bgShowingA = true;
+let bgRunId = 0;
+
+const BG_INTERVAL = 3000; // 3 seconds
 
 
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -920,80 +959,86 @@ function setControlsEnabled(enabled) {
 }
 
 
-function stopStationBackground() {
-  if (backgroundTimer) {
-    clearInterval(backgroundTimer);
-    backgroundTimer = null;
+function clearStationBackground() {
+  bgRunId++;
+  if (bgTimer) {
+    clearInterval(bgTimer);
+    bgTimer = null;
   }
+
+  bgIndex = 0;
+  bgShowingA = true;
 
   stationBgA.classList.remove('active');
   stationBgB.classList.remove('active');
   stationBgA.style.backgroundImage = '';
   stationBgB.style.backgroundImage = '';
-  stationBackground.style.backgroundColor = 'var(--bg-deep)';
-  document.body.classList.remove('has-station-background');
-  backgroundIndex = 0;
-  backgroundShowingA = true;
+
+  stationBgError.style.display = 'none';
 }
 
-function setBackgroundImage(layer, src) {
-  layer.style.backgroundImage = `url("${src.replace(/"/g, '\\"')}")`;
+function preloadImage(src) {
+  return new Promise(resolve => {
+    const img = new Image();
+
+    img.onload = () => resolve(src);
+
+    img.onerror = () => {
+      console.error('[KUKU RADIO] Background image failed:', src);
+      resolve(null);
+    };
+
+    img.src = src;
+  });
 }
 
-function startStationBackground(station) {
+async function startStationBackground(station) {
+  clearStationBackground();
+
   const images = Array.isArray(station.backgroundImages)
     ? station.backgroundImages.filter(Boolean)
     : [];
 
-  const requestId = ++backgroundRequestId;
+  if (!images.length) return;
 
-  stopStationBackground();
+  const runId = bgRunId;
 
-  if (images.length === 0) return;
+  // Preload all images first so the animation never flashes a broken image.
+  const loaded = (await Promise.all(images.map(preloadImage))).filter(Boolean);
 
-  document.body.classList.add('has-station-background');
+  if (runId !== bgRunId) return;
 
-  const preload = images.map(src => {
-    return new Promise(resolve => {
-      const img = new Image();
-      img.onload = () => resolve(src);
-      img.onerror = () => resolve(null);
-      img.src = src;
-    });
-  });
+  if (!loaded.length) {
+    stationBgError.textContent =
+      'Missing You background not found. Check picture/ filenames.';
+    stationBgError.style.display = 'block';
+    return;
+  }
 
-  Promise.all(preload).then(loaded => {
-    if (requestId !== backgroundRequestId) return;
+  // First image appears immediately.
+  bgIndex = 0;
+  bgShowingA = true;
+  stationBgA.style.backgroundImage = `url("${loaded[0]}")`;
+  stationBgA.classList.add('active');
 
-    const validImages = loaded.filter(Boolean);
-    if (validImages.length === 0) return;
+  if (loaded.length === 1) return;
 
-    backgroundIndex = 0;
-    backgroundShowingA = true;
+  bgTimer = setInterval(() => {
+    bgIndex = (bgIndex + 1) % loaded.length;
 
-    setBackgroundImage(stationBgA, validImages[0]);
-    stationBgA.classList.add('active');
-    stationBgB.classList.remove('active');
+    const incoming = bgShowingA ? stationBgB : stationBgA;
+    const outgoing = bgShowingA ? stationBgA : stationBgB;
 
-    if (validImages.length < 2) return;
+    incoming.style.backgroundImage = `url("${loaded[bgIndex]}")`;
 
-    backgroundTimer = setInterval(() => {
-      backgroundIndex = (backgroundIndex + 1) % validImages.length;
+    // Force the browser to register the new background before the fade.
+    void incoming.offsetWidth;
 
-      const incoming = backgroundShowingA ? stationBgB : stationBgA;
-      const outgoing = backgroundShowingA ? stationBgA : stationBgB;
+    incoming.classList.add('active');
+    outgoing.classList.remove('active');
 
-      setBackgroundImage(incoming, validImages[backgroundIndex]);
-
-      // Let the browser paint the new image before triggering the cross-fade.
-      requestAnimationFrame(() => {
-        if (requestId !== backgroundRequestId) return;
-        incoming.classList.add('active');
-        outgoing.classList.remove('active');
-        backgroundShowingA = !backgroundShowingA;
-      });
-    }, BACKGROUND_INTERVAL);
-  });
+    bgShowingA = !bgShowingA;
+  }, BG_INTERVAL);
 }
 
 function goToStation(index, autoplay) {
