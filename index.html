@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KUKU RADIO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-deep: #0f0e1a;
+    --bg-violet: #241f42;
+    --bg-violet-2: #2e2555;
+    --glow-amber: #f2b166;
+    --glow-amber-dim: rgba(242, 177, 102, 0.35);
+    --blush-rose: #e8879a;
+    --soft-lavender: #c9b6e4;
+    --cream: #f7ede0;
+    --cream-dim: rgba(247, 237, 224, 0.62);
+    --cream-faint: rgba(247, 237, 224, 0.34);
+    --glass-bg: rgba(247, 237, 224, 0.055);
+    --glass-border: rgba(247, 237, 224, 0.13);
+    --shadow-deep: rgba(5, 4, 12, 0.55);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    min-height: 100vh;
+    background:
+      radial-gradient(ellipse 90% 60% at 50% -10%, var(--bg-violet-2) 0%, transparent 60%),
+      radial-gradient(ellipse 70% 50% at 85% 15%, rgba(232, 135, 154, 0.12) 0%, transparent 55%),
+      linear-gradient(180deg, var(--bg-deep) 0%, var(--bg-violet) 55%, var(--bg-deep) 100%);
+    color: var(--cream);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* ---------- Ambient sky / particles ---------- */
+  #sky {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  .star {
+    position: absolute;
+    border-radius: 50%;
+    background: var(--cream);
+    animation: twinkle ease-in-out infinite;
+  }
+
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.15; transform: scale(0.85); }
+    50% { opacity: 0.85; transform: scale(1.1); }
+  }
+
+  /* ---------- Layout ---------- */
+  main {
+    position: relative;
+    z-index: 1;
+    max-width: 620px;
+    margin: 0 auto;
+    padding: 3.2rem 1.4rem 4rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* ---------- Header / station ID ---------- */
+  .station-id {
+    text-align: center;
+    margin-bottom: 1.6rem;
+  }
+
+  .on-air {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.22em;
+    color: var(--glow-amber);
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+    opacity: 0.9;
+  }
+
+  .on-air-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--glow-amber);
+    box-shadow: 0 0 8px 2px var(--glow-amber-dim);
+    animation: pulse-dot 2.4s ease-in-out infinite;
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.35; }
+  }
+
+  h1.wordmark {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: clamp(2.4rem, 9vw, 3.6rem);
+    letter-spacing: 0.01em;
+    line-height: 1;
+    background: linear-gradient(180deg, var(--cream) 20%, var(--glow-amber) 140%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .tagline {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 1.02rem;
+    color: var(--cream-dim);
+    margin-top: 0.5rem;
+    letter-spacing: 0.01em;
+  }
+
+  /* ---------- Dial console ---------- */
+  .dial-console {
+    width: 100%;
+    max-width: 420px;
+    margin: 1.8rem 0 0.6rem;
+  }
+
+  #dial-svg {
+    width: 100%;
+    height: auto;
+    display: block;
+    overflow: visible;
+  }
+
+  .dial-arc {
+    fill: none;
+    stroke: var(--glass-border);
+    stroke-width: 1.5;
+  }
+
+  .tick-minor {
+    stroke: var(--cream-faint);
+    stroke-width: 1;
+  }
+
+  .tick-major {
+    stroke: var(--cream-dim);
+    stroke-width: 1.5;
+  }
+
+  .tick-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    fill: var(--cream-dim);
+    text-anchor: middle;
+  }
+
+  .tick-label.active {
+    fill: var(--glow-amber);
+  }
+
+  #needle-group {
+    transform-origin: 200px 210px;
+    transition: transform 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .needle {
+    stroke: var(--glow-amber);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    filter: drop-shadow(0 0 6px var(--glow-amber-dim));
+  }
+
+  .needle-hub {
+    fill: var(--glow-amber);
+    filter: drop-shadow(0 0 6px var(--glow-amber-dim));
+  }
+
+  .dial-veil {
+    fill: url(#veilGradient);
+    opacity: 0;
+    transition: opacity 0.9s ease;
+    pointer-events: none;
+  }
+
+  .dial-console.tuning .dial-veil {
+    opacity: 1;
+  }
+
+  /* ---------- Frequency buttons ---------- */
+  .frequency-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.55rem;
+    margin: 1.4rem 0 2rem;
+    width: 100%;
+  }
+
+  .freq-btn {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--cream-dim);
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 100px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+  }
+
+  .freq-btn .num {
+    font-family: 'Space Mono', monospace;
+    color: var(--soft-lavender);
+    font-size: 0.78rem;
+  }
+
+  .freq-btn:hover {
+    border-color: var(--glow-amber-dim);
+    color: var(--cream);
+  }
+
+  .freq-btn:focus-visible {
+    outline: 2px solid var(--glow-amber);
+    outline-offset: 2px;
+  }
+
+  .freq-btn.active {
+    background: linear-gradient(135deg, rgba(242, 177, 102, 0.18), rgba(232, 135, 154, 0.12));
+    border-color: var(--glow-amber-dim);
+    color: var(--cream);
+  }
+
+  .freq-btn.active .num {
+    color: var(--glow-amber);
+  }
+
+  /* ---------- Now playing card ---------- */
+  .now-playing {
+    width: 100%;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 22px;
+    padding: 1.6rem 1.5rem 1.4rem;
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    box-shadow: 0 20px 60px var(--shadow-deep);
+  }
+
+  .track-meta {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.3rem;
+  }
+
+  .track-meta-text {
+    min-width: 0;
+  }
+
+  .freq-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    color: var(--glow-amber);
+    text-transform: uppercase;
+    opacity: 0.85;
+    margin-bottom: 0.45rem;
+  }
+
+  .track-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 1.35rem;
+    line-height: 1.25;
+    color: var(--cream);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
+  .track-title.empty {
+    font-style: italic;
+    color: var(--cream-dim);
+    font-weight: 400;
+  }
+
+  .track-artist {
+    font-size: 0.85rem;
+    color: var(--cream-dim);
+    margin-top: 0.25rem;
+  }
+
+  .eq-bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 3px;
+    height: 18px;
+    flex-shrink: 0;
+    margin-top: 0.3rem;
+  }
+
+  .eq-bars span {
+    width: 3px;
+    background: var(--glow-amber);
+    border-radius: 2px;
+    height: 4px;
+    opacity: 0.5;
+    animation: bar-bounce 1s ease-in-out infinite;
+    animation-play-state: paused;
+  }
+
+  .eq-bars.playing span { opacity: 1; animation-play-state: running; }
+  .eq-bars span:nth-child(1) { animation-delay: 0s; }
+  .eq-bars span:nth-child(2) { animation-delay: 0.2s; }
+  .eq-bars span:nth-child(3) { animation-delay: 0.35s; }
+
+  @keyframes bar-bounce {
+    0%, 100% { height: 4px; }
+    50% { height: 16px; }
+  }
+
+  /* Progress bar */
+  .progress-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .time {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--cream-faint);
+    min-width: 34px;
+  }
+
+  .time.current { text-align: right; }
+
+  #progress-bar {
+    flex: 1;
+    height: 5px;
+    background: rgba(247, 237, 224, 0.12);
+    border-radius: 10px;
+    position: relative;
+    cursor: pointer;
+  }
+
+  #progress-fill {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 0%;
+    background: linear-gradient(90deg, var(--blush-rose), var(--glow-amber));
+    border-radius: 10px;
+  }
+
+  #progress-bar::after {
+    content: '';
+    position: absolute;
+    left: var(--knob-pos, 0%);
+    top: 50%;
+    width: 12px; height: 12px;
+    background: var(--cream);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 8px var(--shadow-deep);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  #progress-bar:hover::after,
+  #progress-bar:focus-visible::after {
+    opacity: 1;
+  }
+
+  /* Transport */
+  .transport {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.6rem;
+  }
+
+  .transport button {
+    background: none;
+    border: none;
+    color: var(--cream);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.4rem;
+    transition: transform 0.2s ease, color 0.2s ease;
+  }
+
+  .transport button:hover { color: var(--glow-amber); transform: scale(1.08); }
+  .transport button:focus-visible { outline: 2px solid var(--glow-amber); outline-offset: 3px; border-radius: 50%; }
+  .transport button:disabled { opacity: 0.3; cursor: not-allowed; }
+  .transport button:disabled:hover { color: var(--cream); transform: none; }
+
+  #btn-play {
+    width: 58px; height: 58px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--glow-amber), var(--blush-rose));
+    color: var(--bg-deep);
+    box-shadow: 0 8px 26px var(--glow-amber-dim);
+  }
+
+  #btn-play:hover { color: var(--bg-deep); transform: scale(1.05); }
+
+  .volume-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: 1.3rem;
+    padding-top: 1.1rem;
+    border-top: 1px solid var(--glass-border);
+  }
+
+  #volume-slider {
+    flex: 1;
+    accent-color: var(--glow-amber);
+    height: 4px;
+    cursor: pointer;
+  }
+
+  /* ---------- Tracklist ---------- */
+  .tracklist-section {
+    width: 100%;
+    margin-top: 1.8rem;
+  }
+
+  .tracklist-heading {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--cream-faint);
+    margin-bottom: 0.8rem;
+  }
+
+  #tracklist {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  #tracklist li button {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    background: none;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    padding: 0.65rem 0.8rem;
+    color: var(--cream-dim);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.9rem;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease;
+  }
+
+  #tracklist li button:hover {
+    background: var(--glass-bg);
+    border-color: var(--glass-border);
+  }
+
+  #tracklist li button.active {
+    background: var(--glass-bg);
+    border-color: var(--glow-amber-dim);
+    color: var(--cream);
+  }
+
+  #tracklist li button:focus-visible {
+    outline: 2px solid var(--glow-amber);
+    outline-offset: -2px;
+  }
+
+  .track-index {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--cream-faint);
+    width: 1.4rem;
+    flex-shrink: 0;
+  }
+
+  .track-row-artist {
+    color: var(--cream-faint);
+    font-size: 0.8rem;
+  }
+
+  .empty-note {
+    font-size: 0.88rem;
+    color: var(--cream-faint);
+    font-style: italic;
+    padding: 0.6rem 0.2rem;
+  }
+
+  footer {
+    margin-top: 3rem;
+    text-align: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    color: var(--cream-faint);
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 420px) {
+    .track-title { font-size: 1.15rem; }
+    .transport { gap: 1.3rem; }
+    #btn-play { width: 52px; height: 52px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .star { animation: none; opacity: 0.4; }
+    .on-air-dot { animation: none; }
+    #needle-group { transition: none; }
+    .eq-bars span { animation: none; height: 10px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="sky"></div>
+
+<main>
+
+  <div class="station-id">
+    <div class="on-air"><span class="on-air-dot"></span> On air</div>
+    <h1 class="wordmark">KUKU RADIO</h1>
+    <p class="tagline">on air, just for us</p>
+  </div>
+
+  <div class="dial-console" id="dial-console">
+    <svg id="dial-svg" viewBox="0 0 400 225" aria-hidden="true">
+      <defs>
+        <radialGradient id="veilGradient" cx="50%" cy="90%" r="70%">
+          <stop offset="0%" stop-color="#0f0e1a" stop-opacity="0.9"/>
+          <stop offset="100%" stop-color="#0f0e1a" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <path class="dial-arc" d="M 55.1 171.2 A 150 150 0 0 1 344.9 171.2"></path>
+      <g id="ticks-group"></g>
+      <rect class="dial-veil" x="0" y="0" width="400" height="225"></rect>
+      <g id="needle-group">
+        <line class="needle" x1="200" y1="210" x2="200" y2="72"></line>
+        <circle class="needle-hub" cx="200" cy="210" r="6"></circle>
+      </g>
+    </svg>
+  </div>
+
+  <div class="frequency-row" id="frequency-row"></div>
+
+  <section class="now-playing" aria-label="Now playing">
+    <div class="track-meta">
+      <div class="track-meta-text">
+        <div class="freq-label" id="np-freq-label">88.1 · Late Night</div>
+        <div class="track-title empty" id="np-title">This frequency's still quiet</div>
+        <div class="track-artist" id="np-artist">Add a track to start the broadcast</div>
+      </div>
+      <div class="eq-bars" id="eq-bars"><span></span><span></span><span></span></div>
+    </div>
+
+    <div class="progress-row">
+      <span class="time current" id="time-current">0:00</span>
+      <div id="progress-bar" role="slider" tabindex="0" aria-label="Seek" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+        <div id="progress-fill"></div>
+      </div>
+      <span class="time" id="time-duration">0:00</span>
+    </div>
+
+    <div class="transport">
+      <button id="btn-prev" aria-label="Previous track" disabled>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
+      </button>
+      <button id="btn-play" aria-label="Play" disabled>
+        <svg id="play-icon" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+      </button>
+      <button id="btn-next" aria-label="Next track" disabled>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M16 6h2v12h-2zM6 6l8.5 6L6 18z"/></svg>
+      </button>
+    </div>
+
+    <div class="volume-row">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="var(--cream-faint)" aria-hidden="true"><path d="M3 10v4h4l5 5V5L7 10H3z"/></svg>
+      <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="0.8" aria-label="Volume">
+    </div>
+  </section>
+
+  <section class="tracklist-section">
+    <div class="tracklist-heading">On this frequency</div>
+    <ol id="tracklist"></ol>
+  </section>
+
+  <footer>&#8258; private frequency &#8258;</footer>
+
+</main>
+
+<audio id="audio-player" preload="metadata"></audio>
+
+<script>
+/* =========================================================================
+   KUKU RADIO — station config
+   -------------------------------------------------------------------------
+   Add songs here. Each track needs a title, artist, and the file path
+   inside the /audio folder (drop your mp3 file into /audio first, then
+   add a line below with its exact filename).
+
+   Example:
+   { title: "Tum Hi Ho", artist: "Arijit Singh", file: "audio/tum-hi-ho.mp3" }
+   ========================================================================= */
+const STATIONS = [
+  { freq: "88.1", name: "Late Night",    tracks: [] },
+  { freq: "91.5", name: "Missing You",   tracks: [] },
+  { freq: "94.7", name: "Good Mornings", tracks: [] },
+  { freq: "97.3", name: "Slow Dance",    tracks: [] },
+];
+/* ========================================================================= */
+
+const SVG_NS = "http://www.w3.org/2000/svg";
+const CX = 200, CY = 210, R_OUTER = 150, R_MINOR_IN = 145, R_MAJOR_IN = 130, R_LABEL = 113;
+const ANGLE_START = 165, ANGLE_END = 15;
+
+const audio = document.getElementById('audio-player');
+const ticksGroup = document.getElementById('ticks-group');
+const needleGroup = document.getElementById('needle-group');
+const dialConsole = document.getElementById('dial-console');
+const freqRow = document.getElementById('frequency-row');
+const tracklistEl = document.getElementById('tracklist');
+const npFreqLabel = document.getElementById('np-freq-label');
+const npTitle = document.getElementById('np-title');
+const npArtist = document.getElementById('np-artist');
+const eqBars = document.getElementById('eq-bars');
+const progressBar = document.getElementById('progress-bar');
+const progressFill = document.getElementById('progress-fill');
+const timeCurrent = document.getElementById('time-current');
+const timeDuration = document.getElementById('time-duration');
+const btnPlay = document.getElementById('btn-play');
+const btnPrev = document.getElementById('btn-prev');
+const btnNext = document.getElementById('btn-next');
+const playIcon = document.getElementById('play-icon');
+const volumeSlider = document.getElementById('volume-slider');
+
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+let currentStation = 0;
+let currentTrack = 0;
+let isPlaying = false;
+
+const ICON_PLAY = '<path d="M8 5v14l11-7z"/>';
+const ICON_PAUSE = '<path d="M6 5h4v14H6zm8 0h4v14h-4z"/>';
+
+function angleForIndex(i, total) {
+  if (total === 1) return (ANGLE_START + ANGLE_END) / 2;
+  const step = (ANGLE_START - ANGLE_END) / (total - 1);
+  return ANGLE_START - step * i;
+}
+
+function polar(cx, cy, r, angleDeg) {
+  const rad = angleDeg * Math.PI / 180;
+  return { x: cx + r * Math.cos(rad), y: cy - r * Math.sin(rad) };
+}
+
+function buildDial() {
+  let svg = '';
+  // fine minor ticks for texture
+  const minorCount = 23;
+  for (let i = 0; i < minorCount; i++) {
+    const a = ANGLE_START - (i * (ANGLE_START - ANGLE_END) / (minorCount - 1));
+    const p1 = polar(CX, CY, R_MINOR_IN, a);
+    const p2 = polar(CX, CY, R_OUTER, a);
+    svg += `<line class="tick-minor" x1="${p1.x.toFixed(1)}" y1="${p1.y.toFixed(1)}" x2="${p2.x.toFixed(1)}" y2="${p2.y.toFixed(1)}"/>`;
+  }
+  // major ticks + numbers, one per station
+  STATIONS.forEach((s, i) => {
+    const a = angleForIndex(i, STATIONS.length);
+    const p1 = polar(CX, CY, R_MAJOR_IN, a);
+    const p2 = polar(CX, CY, R_OUTER, a);
+    const lp = polar(CX, CY, R_LABEL, a);
+    svg += `<line class="tick-major" data-idx="${i}" x1="${p1.x.toFixed(1)}" y1="${p1.y.toFixed(1)}" x2="${p2.x.toFixed(1)}" y2="${p2.y.toFixed(1)}"/>`;
+    svg += `<text class="tick-label" data-idx="${i}" x="${lp.x.toFixed(1)}" y="${(lp.y + 4).toFixed(1)}">${s.freq}</text>`;
+  });
+  ticksGroup.innerHTML = svg;
+}
+
+function updateNeedle(index) {
+  const a = angleForIndex(index, STATIONS.length);
+  const rotation = 90 - a;
+  needleGroup.style.transform = `rotate(${rotation}deg)`;
+}
+
+function updateDialLabels(activeIndex) {
+  document.querySelectorAll('.tick-label').forEach(el => {
+    el.classList.toggle('active', Number(el.dataset.idx) === activeIndex);
+  });
+}
+
+function buildFrequencyButtons() {
+  freqRow.innerHTML = '';
+  STATIONS.forEach((s, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'freq-btn';
+    btn.type = 'button';
+    btn.innerHTML = `<span class="num">${s.freq}</span><span>${s.name}</span>`;
+    btn.setAttribute('aria-label', `Tune to ${s.freq}, ${s.name}`);
+    btn.addEventListener('click', () => goToStation(i, true));
+    freqRow.appendChild(btn);
+  });
+}
+
+function updateFrequencyActive(index) {
+  [...freqRow.children].forEach((btn, i) => btn.classList.toggle('active', i === index));
+}
+
+function formatTime(sec) {
+  if (!isFinite(sec) || isNaN(sec)) return '0:00';
+  const m = Math.floor(sec / 60);
+  const s = Math.floor(sec % 60);
+  return `${m}:${s.toString().padStart(2, '0')}`;
+}
+
+function renderTracklist() {
+  const station = STATIONS[currentStation];
+  tracklistEl.innerHTML = '';
+  if (station.tracks.length === 0) {
+    const p = document.createElement('p');
+    p.className = 'empty-note';
+    p.textContent = `Nothing queued on ${station.freq} yet — add an mp3 to the audio folder and list it in the station config.`;
+    tracklistEl.appendChild(p);
+    return;
+  }
+  station.tracks.forEach((t, i) => {
+    const li = document.createElement('li');
+    const btn = document.createElement('button');
+    btn.className = i === currentTrack ? 'active' : '';
+    btn.innerHTML = `<span class="track-index">${(i + 1).toString().padStart(2, '0')}</span><span><div>${t.title}</div><div class="track-row-artist">${t.artist || ''}</div></span>`;
+    btn.addEventListener('click', () => {
+      currentTrack = i;
+      loadCurrentTrack();
+      renderTracklist();
+      playAudio();
+    });
+    li.appendChild(btn);
+    tracklistEl.appendChild(li);
+  });
+}
+
+function loadCurrentTrack() {
+  const station = STATIONS[currentStation];
+  npFreqLabel.textContent = `${station.freq} · ${station.name}`;
+
+  if (station.tracks.length === 0) {
+    audio.removeAttribute('src');
+    npTitle.textContent = "This frequency's still quiet";
+    npTitle.classList.add('empty');
+    npArtist.textContent = "Add a track to start the broadcast";
+    setControlsEnabled(false);
+    updateProgressUI(0, 0);
+    return;
+  }
+
+  const track = station.tracks[currentTrack];
+  audio.src = track.file;
+  npTitle.textContent = track.title;
+  npTitle.classList.remove('empty');
+  npArtist.textContent = track.artist || '';
+  setControlsEnabled(true);
+}
+
+function setControlsEnabled(enabled) {
+  btnPlay.disabled = !enabled;
+  btnPrev.disabled = !enabled || STATIONS[currentStation].tracks.length < 2;
+  btnNext.disabled = !enabled || STATIONS[currentStation].tracks.length < 2;
+}
+
+function goToStation(index, autoplay) {
+  pauseAudio();
+  currentStation = index;
+  currentTrack = 0;
+  updateNeedle(index);
+  updateDialLabels(index);
+  updateFrequencyActive(index);
+  loadCurrentTrack();
+  renderTracklist();
+  if (autoplay && STATIONS[index].tracks.length > 0) {
+    playAudio();
+  }
+}
+
+function playAudio() {
+  if (STATIONS[currentStation].tracks.length === 0) return;
+  audio.play().catch(() => {});
+  isPlaying = true;
+  updatePlayUI();
+}
+
+function pauseAudio() {
+  audio.pause();
+  isPlaying = false;
+  updatePlayUI();
+}
+
+function togglePlay() {
+  isPlaying ? pauseAudio() : playAudio();
+}
+
+function updatePlayUI() {
+  playIcon.innerHTML = isPlaying ? ICON_PAUSE : ICON_PLAY;
+  btnPlay.setAttribute('aria-label', isPlaying ? 'Pause' : 'Play');
+  eqBars.classList.toggle('playing', isPlaying);
+}
+
+function nextTrack() {
+  const station = STATIONS[currentStation];
+  if (station.tracks.length === 0) return;
+  currentTrack = (currentTrack + 1) % station.tracks.length;
+  loadCurrentTrack();
+  renderTracklist();
+  playAudio();
+}
+
+function prevTrack() {
+  const station = STATIONS[currentStation];
+  if (station.tracks.length === 0) return;
+  currentTrack = (currentTrack - 1 + station.tracks.length) % station.tracks.length;
+  loadCurrentTrack();
+  renderTracklist();
+  playAudio();
+}
+
+function updateProgressUI(current, duration) {
+  const pct = duration ? (current / duration) * 100 : 0;
+  progressFill.style.width = pct + '%';
+  progressBar.style.setProperty('--knob-pos', pct + '%');
+  progressBar.setAttribute('aria-valuenow', Math.round(pct));
+  timeCurrent.textContent = formatTime(current);
+  timeDuration.textContent = formatTime(duration);
+}
+
+audio.addEventListener('timeupdate', () => updateProgressUI(audio.currentTime, audio.duration));
+audio.addEventListener('loadedmetadata', () => updateProgressUI(audio.currentTime, audio.duration));
+audio.addEventListener('ended', nextTrack);
+
+progressBar.addEventListener('click', (e) => {
+  if (!audio.duration) return;
+  const rect = progressBar.getBoundingClientRect();
+  const pct = Math.min(Math.max((e.clientX - rect.left) / rect.width, 0), 1);
+  audio.currentTime = pct * audio.duration;
+});
+
+progressBar.addEventListener('keydown', (e) => {
+  if (!audio.duration) return;
+  if (e.key === 'ArrowRight') audio.currentTime = Math.min(audio.currentTime + 5, audio.duration);
+  if (e.key === 'ArrowLeft') audio.currentTime = Math.max(audio.currentTime - 5, 0);
+});
+
+btnPlay.addEventListener('click', togglePlay);
+btnNext.addEventListener('click', nextTrack);
+btnPrev.addEventListener('click', prevTrack);
+volumeSlider.addEventListener('input', (e) => { audio.volume = parseFloat(e.target.value); });
+
+function buildSky() {
+  const sky = document.getElementById('sky');
+  const count = prefersReducedMotion ? 18 : 34;
+  let html = '';
+  for (let i = 0; i < count; i++) {
+    const size = (Math.random() * 2 + 1).toFixed(1);
+    const left = (Math.random() * 100).toFixed(2);
+    const top = (Math.random() * 100).toFixed(2);
+    const dur = (Math.random() * 3 + 2.5).toFixed(1);
+    const delay = (Math.random() * 4).toFixed(1);
+    html += `<div class="star" style="width:${size}px;height:${size}px;left:${left}%;top:${top}%;animation-duration:${dur}s;animation-delay:${delay}s;"></div>`;
+  }
+  sky.innerHTML = html;
+}
+
+function tuneIn() {
+  audio.volume = parseFloat(volumeSlider.value);
+  buildDial();
+  buildFrequencyButtons();
+
+  if (!prefersReducedMotion) {
+    needleGroup.style.transition = 'none';
+    updateNeedle(STATIONS.length - 1);
+    dialConsole.classList.add('tuning');
+    // force reflow so the transition below is picked up
+    void needleGroup.offsetWidth;
+    needleGroup.style.transition = '';
+    setTimeout(() => {
+      goToStation(0, false);
+      setTimeout(() => dialConsole.classList.remove('tuning'), 500);
+    }, 250);
+  } else {
+    goToStation(0, false);
+  }
+}
+
+tuneIn();
+buildSky();
+</script>
+
+</body>
+</html>
