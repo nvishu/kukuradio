@@ -40,6 +40,47 @@
     position: relative;
   }
 
+  /* ---------- Station background slideshow ---------- */
+  #station-background {
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    overflow: hidden;
+    pointer-events: none;
+    background: var(--bg-deep);
+  }
+
+  .station-bg-layer {
+    position: absolute;
+    inset: -3%;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    opacity: 0;
+    transform: scale(1.06);
+    transition: opacity 1.35s ease, transform 6s ease;
+    will-change: opacity, transform;
+  }
+
+  .station-bg-layer.active {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .station-bg-overlay {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 50% 35%, rgba(15, 14, 26, 0.18), rgba(15, 14, 26, 0.52) 70%),
+      linear-gradient(180deg, rgba(15, 14, 26, 0.42) 0%, rgba(15, 14, 26, 0.70) 100%);
+    backdrop-filter: blur(1px);
+    -webkit-backdrop-filter: blur(1px);
+  }
+
+  body.has-station-background main {
+    text-shadow: 0 1px 18px rgba(0, 0, 0, 0.22);
+  }
+
   /* ---------- Ambient sky / particles ---------- */
   #sky {
     position: fixed;
@@ -533,6 +574,10 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
+    .station-bg-layer {
+      transition: none;
+      transform: none;
+    }
     .star { animation: none; opacity: 0.4; }
     .on-air-dot { animation: none; }
     #needle-group { transition: none; }
@@ -541,6 +586,13 @@
 </style>
 </head>
 <body>
+
+<div id="station-background" aria-hidden="true">
+  <div class="station-bg-layer" id="station-bg-a"></div>
+  <div class="station-bg-layer" id="station-bg-b"></div>
+  <div class="station-bg-overlay"></div>
+</div>
+
 
 <div id="sky"></div>
 
@@ -634,11 +686,21 @@ const STATIONS = [
   {
     freq: "88.1",
     name: "Late Night",
-    tracks: []
+    tracks: [],
+    backgroundImages: []
   },
   {
     freq: "91.5",
     name: "Missing You",
+    // Add/change images here for this playlist.
+    // Example for another playlist later:
+    // backgroundImages: ["picture/your_1.png", "picture/your_2.png"],
+    backgroundImages: [
+      "picture/missing_1.png",
+      "picture/missing_2.png",
+      "picture/missing_3.png",
+      "picture/missing_4.png"
+    ],
     tracks: [
       { title: "Ajab Si", artist: "KUKU RADIO", file: "audio/Ajab Si.mp3" },
       { title: "Banjaara", artist: "KUKU RADIO", file: "audio/Banjaara.mp3" },
@@ -677,12 +739,16 @@ const STATIONS = [
   {
     freq: "94.7",
     name: "Good Mornings",
-    tracks: []
+    tracks: [],
+    // Upload images later and put their paths here.
+    backgroundImages: []
   },
   {
     freq: "97.3",
     name: "Slow Dance",
-    tracks: []
+    tracks: [],
+    // Upload images later and put their paths here.
+    backgroundImages: []
   }
 ];
 /* ========================================================================= */
@@ -710,6 +776,16 @@ const btnPrev = document.getElementById('btn-prev');
 const btnNext = document.getElementById('btn-next');
 const playIcon = document.getElementById('play-icon');
 const volumeSlider = document.getElementById('volume-slider');
+const stationBackground = document.getElementById('station-background');
+const stationBgA = document.getElementById('station-bg-a');
+const stationBgB = document.getElementById('station-bg-b');
+
+let backgroundTimer = null;
+let backgroundIndex = 0;
+let backgroundShowingA = true;
+let backgroundRequestId = 0;
+const BACKGROUND_INTERVAL = 3000;
+
 
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -843,6 +919,83 @@ function setControlsEnabled(enabled) {
   btnNext.disabled = !enabled || STATIONS[currentStation].tracks.length < 2;
 }
 
+
+function stopStationBackground() {
+  if (backgroundTimer) {
+    clearInterval(backgroundTimer);
+    backgroundTimer = null;
+  }
+
+  stationBgA.classList.remove('active');
+  stationBgB.classList.remove('active');
+  stationBgA.style.backgroundImage = '';
+  stationBgB.style.backgroundImage = '';
+  stationBackground.style.backgroundColor = 'var(--bg-deep)';
+  document.body.classList.remove('has-station-background');
+  backgroundIndex = 0;
+  backgroundShowingA = true;
+}
+
+function setBackgroundImage(layer, src) {
+  layer.style.backgroundImage = `url("${src.replace(/"/g, '\\"')}")`;
+}
+
+function startStationBackground(station) {
+  const images = Array.isArray(station.backgroundImages)
+    ? station.backgroundImages.filter(Boolean)
+    : [];
+
+  const requestId = ++backgroundRequestId;
+
+  stopStationBackground();
+
+  if (images.length === 0) return;
+
+  document.body.classList.add('has-station-background');
+
+  const preload = images.map(src => {
+    return new Promise(resolve => {
+      const img = new Image();
+      img.onload = () => resolve(src);
+      img.onerror = () => resolve(null);
+      img.src = src;
+    });
+  });
+
+  Promise.all(preload).then(loaded => {
+    if (requestId !== backgroundRequestId) return;
+
+    const validImages = loaded.filter(Boolean);
+    if (validImages.length === 0) return;
+
+    backgroundIndex = 0;
+    backgroundShowingA = true;
+
+    setBackgroundImage(stationBgA, validImages[0]);
+    stationBgA.classList.add('active');
+    stationBgB.classList.remove('active');
+
+    if (validImages.length < 2) return;
+
+    backgroundTimer = setInterval(() => {
+      backgroundIndex = (backgroundIndex + 1) % validImages.length;
+
+      const incoming = backgroundShowingA ? stationBgB : stationBgA;
+      const outgoing = backgroundShowingA ? stationBgA : stationBgB;
+
+      setBackgroundImage(incoming, validImages[backgroundIndex]);
+
+      // Let the browser paint the new image before triggering the cross-fade.
+      requestAnimationFrame(() => {
+        if (requestId !== backgroundRequestId) return;
+        incoming.classList.add('active');
+        outgoing.classList.remove('active');
+        backgroundShowingA = !backgroundShowingA;
+      });
+    }, BACKGROUND_INTERVAL);
+  });
+}
+
 function goToStation(index, autoplay) {
   pauseAudio();
   currentStation = index;
@@ -852,6 +1005,7 @@ function goToStation(index, autoplay) {
   updateFrequencyActive(index);
   loadCurrentTrack();
   renderTracklist();
+  startStationBackground(STATIONS[index]);
   if (autoplay && STATIONS[index].tracks.length > 0) {
     playAudio();
   }
