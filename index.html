@@ -4,6 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>KUKU RADIO</title>
+<meta name="theme-color" content="#170812">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png" type="image/png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="KUKU RADIO">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -91,6 +99,48 @@
     --glass-bg: rgba(244, 249, 251, 0.06);
     --glass-border: rgba(180, 210, 225, 0.18);
     --shadow-deep: rgba(3, 8, 14, 0.55);
+  }
+
+  /* Station 5 — Punjabi Funk: electric purple / magenta / lime */
+  body[data-theme="funky"] {
+    --bg-deep: #160b24;
+    --bg-deep-rgb: 22, 11, 36;
+    --bg-violet: #3a124f;
+    --bg-violet-2: #671b70;
+    --glow-amber: #ff4fd8;
+    --glow-amber-rgb: 255, 79, 216;
+    --glow-amber-dim: rgba(255, 79, 216, 0.38);
+    --blush-rose: #8cff4f;
+    --blush-rose-rgb: 140, 255, 79;
+    --soft-lavender: #e2b7ff;
+    --cream: #fff5ff;
+    --cream-rgb: 255, 245, 255;
+    --cream-dim: rgba(255, 245, 255, 0.68);
+    --cream-faint: rgba(255, 245, 255, 0.38);
+    --glass-bg: rgba(255, 245, 255, 0.075);
+    --glass-border: rgba(255, 79, 216, 0.24);
+    --shadow-deep: rgba(13, 3, 20, 0.58);
+  }
+
+  /* Station 6 — Party Vibes: warm white / coffee brown */
+  body[data-theme="party"] {
+    --bg-deep: #17120e;
+    --bg-deep-rgb: 23, 18, 14;
+    --bg-violet: #3a2a1e;
+    --bg-violet-2: #59402b;
+    --glow-amber: #f3dfbd;
+    --glow-amber-rgb: 243, 223, 189;
+    --glow-amber-dim: rgba(243, 223, 189, 0.36);
+    --blush-rose: #b98255;
+    --blush-rose-rgb: 185, 130, 85;
+    --soft-lavender: #d7c2aa;
+    --cream: #fffaf2;
+    --cream-rgb: 255, 250, 242;
+    --cream-dim: rgba(255, 250, 242, 0.68);
+    --cream-faint: rgba(255, 250, 242, 0.38);
+    --glass-bg: rgba(255, 250, 242, 0.075);
+    --glass-border: rgba(243, 223, 189, 0.22);
+    --shadow-deep: rgba(12, 8, 5, 0.62);
   }
 
   /* Station 4 — "Slow move" — brown / gray / white */
@@ -204,7 +254,7 @@
     display: none;
   }
 
-  /* ---------- Ambient sky / particles ---------- 
+  /* ---------- Ambient sky / particles ---------- */
   #sky {
     position: fixed;
     inset: 0;
@@ -331,7 +381,8 @@
 
   .tick-label {
     font-family: 'Space Mono', monospace;
-    font-size: 11px;
+    font-size: 15px;
+    font-weight: 700;
     fill: var(--cream-dim);
     text-anchor: middle;
     transition: fill 0.9s ease;
@@ -388,7 +439,7 @@
 
   .freq-btn {
     font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 0.82rem;
+    font-size: 0.88rem;
     font-weight: 500;
     color: var(--cream-dim);
     background: var(--glass-bg);
@@ -405,7 +456,8 @@
   .freq-btn .num {
     font-family: 'Space Mono', monospace;
     color: var(--soft-lavender);
-    font-size: 0.78rem;
+    font-size: 0.9rem;
+    font-weight: 700;
     transition: color 0.4s ease;
   }
 
@@ -721,6 +773,13 @@
     transition: color 0.9s ease;
   }
 
+  @media (max-width: 560px) {
+    .frequency-row { gap: 0.45rem; }
+    .freq-btn { font-size: 0.8rem; padding: 0.48rem 0.78rem; }
+    .freq-btn .num { font-size: 0.82rem; }
+    .tick-label { font-size: 13px; }
+  }
+
   @media (max-width: 420px) {
     .track-title { font-size: 1.15rem; }
     .transport { gap: 1.3rem; }
@@ -737,6 +796,281 @@
     #needle-group { transition: none; }
     .eq-bars span { animation: none; height: 10px; }
   }
+
+  /* ---------- Responsive / device optimization ---------- */
+  html {
+    min-width: 320px;
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    min-height: 100svh;
+    min-height: 100dvh;
+    overscroll-behavior-x: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  button, input, a {
+    touch-action: manipulation;
+  }
+
+  main {
+    width: min(100%, 720px);
+    max-width: 720px;
+    padding:
+      max(2rem, env(safe-area-inset-top))
+      max(1rem, env(safe-area-inset-right))
+      calc(4rem + env(safe-area-inset-bottom))
+      max(1rem, env(safe-area-inset-left));
+  }
+
+  .station-id {
+    width: 100%;
+  }
+
+  .wordmark {
+    max-width: 100%;
+  }
+
+  .frequency-row {
+    padding-inline: 0.1rem;
+  }
+
+  .freq-btn {
+    min-height: 42px;
+    white-space: nowrap;
+  }
+
+  .now-playing,
+  .tracklist-section {
+    width: 100%;
+  }
+
+  .now-playing {
+    overflow: hidden;
+  }
+
+  #tracklist li button {
+    min-height: 48px;
+  }
+
+  .quick-links {
+    position: fixed;
+    right: max(14px, env(safe-area-inset-right));
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    width: min(190px, 18vw);
+  }
+
+  .quick-link {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    min-height: 42px;
+    padding: 0.62rem 0.72rem;
+    border: 1px solid var(--glass-border);
+    border-radius: 14px;
+    color: var(--cream);
+    background: rgba(var(--bg-deep-rgb), 0.72);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 10px 30px rgba(0,0,0,.22);
+    text-decoration: none;
+    font-size: 0.74rem;
+    font-weight: 700;
+    transition: transform .2s ease, border-color .2s ease, background .2s ease;
+  }
+
+  .quick-link:hover,
+  .quick-link:focus-visible {
+    transform: translateX(-3px);
+    border-color: var(--glow-amber-dim);
+    background: rgba(var(--bg-deep-rgb), 0.9);
+  }
+
+  .quick-link .quick-icon {
+    width: 24px;
+    height: 24px;
+    flex: 0 0 24px;
+    display: grid;
+    place-items: center;
+    border-radius: 8px;
+    background: rgba(var(--cream-rgb), 0.08);
+    font-size: 0.82rem;
+  }
+
+  .install-button {
+    border: 1px solid var(--glow-amber-dim);
+    cursor: pointer;
+    color: var(--cream);
+    font-family: inherit;
+  }
+
+  .install-button[hidden] {
+    display: none;
+  }
+
+  .install-hint {
+    position: fixed;
+    right: max(14px, env(safe-area-inset-right));
+    bottom: max(14px, env(safe-area-inset-bottom));
+    z-index: 51;
+    max-width: min(330px, calc(100vw - 28px));
+    padding: 0.8rem 1rem;
+    border: 1px solid var(--glass-border);
+    border-radius: 14px;
+    background: rgba(var(--bg-deep-rgb), 0.92);
+    color: var(--cream-dim);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 15px 40px rgba(0,0,0,.3);
+    font-size: .78rem;
+    line-height: 1.45;
+  }
+
+  .install-hint[hidden] {
+    display: none;
+  }
+
+  @media (min-width: 1100px) {
+    main {
+      margin-right: clamp(190px, 16vw, 260px);
+    }
+
+    .quick-links {
+      width: 185px;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .quick-links {
+      top: auto;
+      bottom: max(14px, env(safe-area-inset-bottom));
+      transform: none;
+      width: auto;
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      max-width: min(94vw, 520px);
+    }
+
+    .quick-link {
+      width: auto;
+    }
+
+    .quick-link span.label {
+      display: none;
+    }
+
+    .quick-link .quick-icon {
+      width: 30px;
+      height: 30px;
+      flex-basis: 30px;
+    }
+
+    main {
+      padding-bottom: 6rem;
+    }
+  }
+
+  @media (max-width: 600px) {
+    main {
+      padding-top: max(1.4rem, env(safe-area-inset-top));
+    }
+
+    .wordmark {
+      font-size: clamp(2.05rem, 13vw, 3rem);
+    }
+
+    .tagline {
+      font-size: .9rem;
+    }
+
+    .dial-console {
+      margin-top: 1rem;
+    }
+
+    .frequency-row {
+      gap: .42rem;
+      margin: 1rem 0 1.25rem;
+    }
+
+    .freq-btn {
+      flex: 1 1 calc(50% - .42rem);
+      justify-content: center;
+      padding: .58rem .55rem;
+      font-size: .76rem;
+    }
+
+    .freq-btn .num {
+      font-size: .82rem;
+    }
+
+    .now-playing {
+      border-radius: 18px;
+      padding: 1.25rem 1rem 1.1rem;
+    }
+
+    .track-title {
+      font-size: 1.2rem;
+    }
+
+    .transport {
+      gap: clamp(1.4rem, 12vw, 2.8rem);
+    }
+
+    #btn-play {
+      width: 58px;
+      height: 58px;
+    }
+
+    #tracklist li button {
+      padding: .7rem .55rem;
+      gap: .55rem;
+      font-size: .82rem;
+    }
+
+    .track-row-artist {
+      font-size: .72rem;
+    }
+  }
+
+  @media (max-width: 380px) {
+    .freq-btn {
+      flex-basis: 100%;
+    }
+
+    .quick-links {
+      gap: .35rem;
+    }
+
+    .quick-link {
+      min-height: 38px;
+      padding: .4rem;
+    }
+  }
+
+  @media (pointer: coarse) {
+    .freq-btn,
+    #tracklist li button,
+    .quick-link,
+    .install-button {
+      min-height: 44px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .station-bg-layer,
+    .quick-link {
+      transition: none !important;
+    }
+  }
+
 </style>
 </head>
 <body data-theme="rose">
@@ -751,6 +1085,26 @@
 </div>
 
 <div id="sky"></div>
+
+
+<nav class="quick-links" aria-label="Music and KUKU RADIO links">
+  <a class="quick-link" href="https://music.youtube.com/" target="_blank" rel="noopener noreferrer" aria-label="Open YouTube Music">
+    <span class="quick-icon">▶</span><span class="label">YouTube Music</span>
+  </a>
+  <a class="quick-link" href="https://open.spotify.com/" target="_blank" rel="noopener noreferrer" aria-label="Open Spotify">
+    <span class="quick-icon">●</span><span class="label">Spotify</span>
+  </a>
+  <a class="quick-link" href="https://www.jiosaavn.com/" target="_blank" rel="noopener noreferrer" aria-label="Open JioSaavn">
+    <span class="quick-icon">♫</span><span class="label">JioSaavn</span>
+  </a>
+  <a class="quick-link" id="song-request-link" href="#" aria-label="Request a new song on WhatsApp">
+    <span class="quick-icon">☏</span><span class="label">Request Song</span>
+  </a>
+  <button class="quick-link install-button" id="install-app-button" type="button" aria-label="Install KUKU RADIO">
+    <span class="quick-icon">＋</span><span class="label">Install App</span>
+  </button>
+</nav>
+<div class="install-hint" id="install-hint" hidden></div>
 
 <main>
 
@@ -821,7 +1175,7 @@
     <ol id="tracklist"></ol>
   </section>
 
-  <footer>&#8258; private frequency &#8258;</footer>
+  <footer>&#8258; private frequency &#8258; &nbsp;·&nbsp; installable web app</footer>
 
 </main>
 
@@ -1000,6 +1354,32 @@ const STATIONS = [
       { title: "Ed Sheeran - Perfect", artist: "KUKU RADIO", file: "audio/Ed Sheeran - Perfect.mp3" },
       { title: "A Thousand Years - Christina Perri", artist: "KUKU RADIO", file: "audio/A Thousand Years - Christina Perri.mp3" }
     ]
+  },
+  {
+    freq: "100.1",
+    name: "Punjabi Funk",
+    theme: "funky",
+    backgroundImages: [
+      // Add Punjabi images later:
+      // "picture/punjabi_1.png",
+      // "picture/punjabi_2.png",
+      // "picture/punjabi_3.png",
+      // "picture/punjabi_4.png"
+    ],
+    tracks: []
+  },
+  {
+    freq: "103.5",
+    name: "Party Vibes",
+    theme: "party",
+    backgroundImages: [
+      // Add Party images later:
+      // "picture/party_1.png",
+      // "picture/party_2.png",
+      // "picture/party_3.png",
+      // "picture/party_4.png"
+    ],
+    tracks: []
   }
 ];
 /* ========================================================================= */
@@ -1382,6 +1762,69 @@ function tuneIn() {
     goToStation(0, false);
   }
 }
+
+
+/* ---------- Quick links / PWA install ---------- */
+const requestSongLink = document.getElementById('song-request-link');
+const installAppButton = document.getElementById('install-app-button');
+const installHint = document.getElementById('install-hint');
+
+const REQUEST_MESSAGE =
+  "Hi KUKU RADIO 👋\n\nI want to request a song.\n\nSong name: \nStation / Playlist: \n\nPlease add it if possible. 🎵";
+
+requestSongLink.href =
+  "https://wa.me/?text=" + encodeURIComponent(REQUEST_MESSAGE);
+
+let deferredInstallPrompt = null;
+
+window.addEventListener('beforeinstallprompt', (event) => {
+  event.preventDefault();
+  deferredInstallPrompt = event;
+  installAppButton.hidden = false;
+});
+
+installAppButton.addEventListener('click', async () => {
+  if (deferredInstallPrompt) {
+    deferredInstallPrompt.prompt();
+    await deferredInstallPrompt.userChoice;
+    deferredInstallPrompt = null;
+    installAppButton.hidden = true;
+    return;
+  }
+
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isStandalone =
+    window.matchMedia('(display-mode: standalone)').matches ||
+    window.navigator.standalone === true;
+
+  if (isStandalone) {
+    installHint.textContent = "KUKU RADIO is already installed on this device.";
+  } else if (isIOS) {
+    installHint.textContent =
+      "On iPhone/iPad: tap Share → Add to Home Screen.";
+  } else {
+    installHint.textContent =
+      "On Android Chrome: open the browser menu (⋮) → Install app / Add to Home screen.";
+  }
+
+  installHint.hidden = false;
+  setTimeout(() => { installHint.hidden = true; }, 6500);
+});
+
+window.addEventListener('appinstalled', () => {
+  deferredInstallPrompt = null;
+  installAppButton.hidden = true;
+});
+
+/* Register the service worker for the installable Android/PWA version. */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch((error) => {
+      console.warn('[KUKU RADIO] Service worker registration failed:', error);
+    });
+  });
+}
+
 
 tuneIn();
 buildSky();
