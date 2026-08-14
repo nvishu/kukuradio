@@ -197,6 +197,7 @@
 
   .station-bg-layer {
     position: absolute;
+    contain: paint;
     inset: 0;
     width: 100%;
     height: 100%;
@@ -797,7 +798,7 @@
     .eq-bars span { animation: none; height: 10px; }
   }
 
-  /* ---------- Responsive / device optimization ---------- */
+  /* ---------- Final responsive / performance layer ---------- */
   html {
     min-width: 320px;
     -webkit-text-size-adjust: 100%;
@@ -807,54 +808,98 @@
   body {
     min-height: 100svh;
     min-height: 100dvh;
+    overflow-x: hidden;
     overscroll-behavior-x: none;
     -webkit-tap-highlight-color: transparent;
   }
 
-  button, input, a {
-    touch-action: manipulation;
-  }
-
   main {
-    width: min(100%, 720px);
-    max-width: 720px;
-    padding:
-      max(2rem, env(safe-area-inset-top))
-      max(1rem, env(safe-area-inset-right))
-      calc(4rem + env(safe-area-inset-bottom))
-      max(1rem, env(safe-area-inset-left));
+    position: relative;
+    z-index: 3;
+    width: min(620px, calc(100vw - 2rem));
+    max-width: 620px;
+    margin: 0 auto !important;
+    padding: max(2rem, env(safe-area-inset-top)) 0 calc(4.5rem + env(safe-area-inset-bottom));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
-  .station-id {
-    width: 100%;
-  }
-
-  .wordmark {
-    max-width: 100%;
-  }
-
-  .frequency-row {
-    padding-inline: 0.1rem;
-  }
-
-  .freq-btn {
-    min-height: 42px;
-    white-space: nowrap;
-  }
-
+  .station-id,
+  .dial-console,
+  .frequency-row,
   .now-playing,
   .tracklist-section {
     width: 100%;
   }
 
+  .station-id { text-align: center; }
+
+  .dial-console {
+    max-width: 420px;
+    margin-inline: auto;
+  }
+
+  .frequency-row {
+    justify-content: center;
+    padding-inline: 0;
+  }
+
+  /* Compact player: same structure, roughly half the vertical bulk. */
   .now-playing {
-    overflow: hidden;
+    box-sizing: border-box;
+    padding: .85rem 1rem .75rem;
+    border-radius: 18px;
   }
 
-  #tracklist li button {
-    min-height: 48px;
+  .track-meta {
+    margin-bottom: .65rem;
+    gap: .75rem;
   }
 
+  .freq-label {
+    font-size: .62rem;
+    margin-bottom: .18rem;
+  }
+
+  .track-title {
+    font-size: 1.2rem;
+    line-height: 1.15;
+    -webkit-line-clamp: 1;
+  }
+
+  .track-artist {
+    font-size: .75rem;
+    margin-top: .12rem;
+  }
+
+  .eq-bars {
+    height: 16px;
+    margin-top: .15rem;
+  }
+
+  .progress-row {
+    gap: .45rem;
+    margin-bottom: .65rem;
+  }
+
+  #progress-bar { height: 4px; }
+  #progress-bar::after { width: 10px; height: 10px; }
+
+  .transport { gap: 1.35rem; }
+  .transport button { padding: .25rem; }
+
+  #btn-play {
+    width: 50px;
+    height: 50px;
+  }
+
+  .volume-row {
+    margin-top: .7rem;
+    padding-top: .65rem;
+  }
+
+  /* Right-side links are fixed to the viewport and never affect centering. */
   .quick-links {
     position: fixed;
     right: max(14px, env(safe-area-inset-right));
@@ -863,57 +908,65 @@
     z-index: 50;
     display: flex;
     flex-direction: column;
-    gap: 0.55rem;
-    width: min(190px, 18vw);
+    gap: .5rem;
+    width: 174px;
+    pointer-events: none;
   }
 
   .quick-link {
+    pointer-events: auto;
     display: flex;
     align-items: center;
-    gap: 0.55rem;
+    gap: .55rem;
     min-height: 42px;
-    padding: 0.62rem 0.72rem;
+    box-sizing: border-box;
+    padding: .45rem .62rem;
     border: 1px solid var(--glass-border);
-    border-radius: 14px;
+    border-radius: 13px;
     color: var(--cream);
-    background: rgba(var(--bg-deep-rgb), 0.72);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    box-shadow: 0 10px 30px rgba(0,0,0,.22);
+    background: rgba(var(--bg-deep-rgb), .72);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 8px 24px rgba(0,0,0,.2);
     text-decoration: none;
-    font-size: 0.74rem;
+    font-size: .72rem;
     font-weight: 700;
-    transition: transform .2s ease, border-color .2s ease, background .2s ease;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    cursor: pointer;
+    transition: transform .18s ease, border-color .2s ease, background .2s ease;
   }
 
   .quick-link:hover,
   .quick-link:focus-visible {
     transform: translateX(-3px);
     border-color: var(--glow-amber-dim);
-    background: rgba(var(--bg-deep-rgb), 0.9);
+    background: rgba(var(--bg-deep-rgb), .9);
   }
 
-  .quick-link .quick-icon {
-    width: 24px;
-    height: 24px;
-    flex: 0 0 24px;
+  .quick-icon-img {
+    width: 28px;
+    height: 28px;
+    flex: 0 0 28px;
+    display: block;
+    object-fit: contain;
+    border-radius: 7px;
+  }
+
+  .install-plus {
+    width: 28px;
+    height: 28px;
+    flex: 0 0 28px;
     display: grid;
     place-items: center;
-    border-radius: 8px;
-    background: rgba(var(--cream-rgb), 0.08);
-    font-size: 0.82rem;
+    border-radius: 7px;
+    color: var(--glow-amber);
+    background: rgba(var(--cream-rgb), .08);
+    font-size: 1.3rem;
+    line-height: 1;
   }
 
-  .install-button {
-    border: 1px solid var(--glow-amber-dim);
-    cursor: pointer;
-    color: var(--cream);
-    font-family: inherit;
-  }
-
-  .install-button[hidden] {
-    display: none;
-  }
+  .install-button { color: var(--cream); }
+  .install-button[hidden] { display: none; }
 
   .install-hint {
     position: fixed;
@@ -921,156 +974,105 @@
     bottom: max(14px, env(safe-area-inset-bottom));
     z-index: 51;
     max-width: min(330px, calc(100vw - 28px));
-    padding: 0.8rem 1rem;
+    padding: .75rem .9rem;
     border: 1px solid var(--glass-border);
-    border-radius: 14px;
-    background: rgba(var(--bg-deep-rgb), 0.92);
+    border-radius: 13px;
+    background: rgba(var(--bg-deep-rgb), .94);
     color: var(--cream-dim);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    box-shadow: 0 15px 40px rgba(0,0,0,.3);
-    font-size: .78rem;
-    line-height: 1.45;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 12px 32px rgba(0,0,0,.3);
+    font-size: .75rem;
+    line-height: 1.4;
   }
 
-  .install-hint[hidden] {
-    display: none;
-  }
+  .install-hint[hidden] { display: none; }
 
   @media (min-width: 1100px) {
-    main {
-      margin-right: clamp(190px, 16vw, 260px);
-    }
-
-    .quick-links {
-      width: 185px;
-    }
+    main { width: min(620px, 620px); }
   }
 
   @media (max-width: 900px) {
     .quick-links {
       top: auto;
-      bottom: max(14px, env(safe-area-inset-bottom));
+      right: max(12px, env(safe-area-inset-right));
+      bottom: max(12px, env(safe-area-inset-bottom));
       transform: none;
       width: auto;
       flex-direction: row;
-      flex-wrap: wrap;
+      align-items: center;
       justify-content: flex-end;
-      max-width: min(94vw, 520px);
+      max-width: calc(100vw - 24px);
     }
 
     .quick-link {
-      width: auto;
+      min-width: 44px;
+      min-height: 44px;
+      padding: .45rem;
+      justify-content: center;
+      border-radius: 12px;
     }
 
-    .quick-link span.label {
-      display: none;
-    }
+    .quick-link .label { display: none; }
+    .quick-icon-img, .install-plus { width: 30px; height: 30px; flex-basis: 30px; }
 
-    .quick-link .quick-icon {
-      width: 30px;
-      height: 30px;
-      flex-basis: 30px;
-    }
-
-    main {
-      padding-bottom: 6rem;
-    }
+    main { padding-bottom: 5.4rem; }
   }
 
   @media (max-width: 600px) {
     main {
-      padding-top: max(1.4rem, env(safe-area-inset-top));
+      width: min(100% - 1.2rem, 620px);
+      padding-top: max(1.2rem, env(safe-area-inset-top));
     }
 
-    .wordmark {
-      font-size: clamp(2.05rem, 13vw, 3rem);
-    }
-
-    .tagline {
-      font-size: .9rem;
-    }
-
-    .dial-console {
-      margin-top: 1rem;
-    }
+    .wordmark { font-size: clamp(2.1rem, 12vw, 3.2rem); }
+    .tagline { font-size: .9rem; }
+    .dial-console { margin-top: .75rem; }
 
     .frequency-row {
       gap: .42rem;
-      margin: 1rem 0 1.25rem;
+      margin: .8rem 0 1rem;
     }
 
     .freq-btn {
       flex: 1 1 calc(50% - .42rem);
       justify-content: center;
-      padding: .58rem .55rem;
-      font-size: .76rem;
+      min-height: 44px;
+      padding: .52rem .5rem;
+      font-size: .75rem;
     }
 
-    .freq-btn .num {
-      font-size: .82rem;
-    }
+    .freq-btn .num { font-size: .8rem; }
 
     .now-playing {
-      border-radius: 18px;
-      padding: 1.25rem 1rem 1.1rem;
+      padding: .72rem .78rem .68rem;
+      border-radius: 16px;
     }
 
-    .track-title {
-      font-size: 1.2rem;
-    }
+    .track-title { font-size: 1.08rem; }
+    .track-artist { font-size: .72rem; }
+    .transport { gap: 1.05rem; }
+    #btn-play { width: 48px; height: 48px; }
 
-    .transport {
-      gap: clamp(1.4rem, 12vw, 2.8rem);
-    }
-
-    #btn-play {
-      width: 58px;
-      height: 58px;
-    }
-
-    #tracklist li button {
-      padding: .7rem .55rem;
-      gap: .55rem;
-      font-size: .82rem;
-    }
-
-    .track-row-artist {
-      font-size: .72rem;
+    .volume-row {
+      margin-top: .55rem;
+      padding-top: .5rem;
     }
   }
 
   @media (max-width: 380px) {
-    .freq-btn {
-      flex-basis: 100%;
-    }
-
-    .quick-links {
-      gap: .35rem;
-    }
-
-    .quick-link {
-      min-height: 38px;
-      padding: .4rem;
-    }
+    .freq-btn { flex-basis: 100%; }
+    .quick-links { gap: .3rem; }
+    .quick-link { min-width: 42px; min-height: 42px; }
   }
 
   @media (pointer: coarse) {
-    .freq-btn,
-    #tracklist li button,
-    .quick-link,
-    .install-button {
-      min-height: 44px;
-    }
+    .freq-btn, #tracklist li button, .quick-link, .install-button { min-height: 44px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .station-bg-layer,
-    .quick-link {
-      transition: none !important;
-    }
+    .station-bg-layer, .quick-link { transition: none !important; }
   }
-
 </style>
 </head>
 <body data-theme="rose">
@@ -1082,26 +1084,29 @@
   <div class="station-bg-error" id="station-bg-error">
     Background image could not be loaded.
   </div>
-</div>
 
 <div id="sky"></div>
 
 
 <nav class="quick-links" aria-label="Music and KUKU RADIO links">
   <a class="quick-link" href="https://music.youtube.com/" target="_blank" rel="noopener noreferrer" aria-label="Open YouTube Music">
-    <span class="quick-icon">▶</span><span class="label">YouTube Music</span>
+    <img class="quick-icon-img" src="icons/youtube-music.svg" alt="" width="28" height="28" decoding="async">
+    <span class="label">YouTube Music</span>
   </a>
   <a class="quick-link" href="https://open.spotify.com/" target="_blank" rel="noopener noreferrer" aria-label="Open Spotify">
-    <span class="quick-icon">●</span><span class="label">Spotify</span>
+    <img class="quick-icon-img" src="icons/spotify.svg" alt="" width="28" height="28" decoding="async">
+    <span class="label">Spotify</span>
   </a>
   <a class="quick-link" href="https://www.jiosaavn.com/" target="_blank" rel="noopener noreferrer" aria-label="Open JioSaavn">
-    <span class="quick-icon">♫</span><span class="label">JioSaavn</span>
+    <img class="quick-icon-img" src="icons/jiosaavn.svg" alt="" width="28" height="28" decoding="async">
+    <span class="label">JioSaavn</span>
   </a>
   <a class="quick-link" id="song-request-link" href="#" aria-label="Request a new song on WhatsApp">
-    <span class="quick-icon">☏</span><span class="label">Request Song</span>
+    <img class="quick-icon-img" src="icons/whatsapp.svg" alt="" width="28" height="28" decoding="async">
+    <span class="label">Request Song</span>
   </a>
   <button class="quick-link install-button" id="install-app-button" type="button" aria-label="Install KUKU RADIO">
-    <span class="quick-icon">＋</span><span class="label">Install App</span>
+    <span class="install-plus" aria-hidden="true">＋</span><span class="label">Install App</span>
   </button>
 </nav>
 <div class="install-hint" id="install-hint" hidden></div>
@@ -1179,7 +1184,7 @@
 
 </main>
 
-<audio id="audio-player" preload="metadata"></audio>
+<audio preload="metadata" id="audio-player" preload="metadata"></audio>
 
 <script>
 /* =========================================================================
@@ -1416,7 +1421,7 @@ let bgIndex = 0;
 let bgShowingA = true;
 let bgRunId = 0;
 
-const BG_INTERVAL = 10000; // 10 seconds
+const BG_INTERVAL = 3000; // 3 seconds
 
 
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1554,89 +1559,72 @@ function setControlsEnabled(enabled) {
 
 function clearStationBackground() {
   bgRunId++;
-  if (bgTimer) {
-    clearInterval(bgTimer);
-    bgTimer = null;
-  }
-
+  if (bgTimer) { clearInterval(bgTimer); bgTimer = null; }
   bgIndex = 0;
   bgShowingA = true;
-
   stationBgA.classList.remove('active');
   stationBgB.classList.remove('active');
   stationBgA.style.backgroundImage = '';
   stationBgB.style.backgroundImage = '';
-
   stationBgError.style.display = 'none';
 }
 
-function preloadImage(src) {
+function loadImage(src) {
   return new Promise(resolve => {
     const img = new Image();
-
+    img.decoding = 'async';
     img.onload = () => resolve(src);
-
-    img.onerror = () => {
-      console.error('[KUKU RADIO] Background image failed:', src);
-      resolve(null);
-    };
-
+    img.onerror = () => { console.warn('[KUKU RADIO] Background failed:', src); resolve(null); };
     img.src = src;
   });
 }
 
 async function startStationBackground(station) {
   clearStationBackground();
-
-  const images = Array.isArray(station.backgroundImages)
-    ? station.backgroundImages.filter(Boolean)
-    : [];
-
+  const images = Array.isArray(station.backgroundImages) ? station.backgroundImages.filter(Boolean) : [];
   if (!images.length) return;
 
   const runId = bgRunId;
-
-  // Preload all images first so the animation never flashes a broken image.
-  const loaded = (await Promise.all(images.map(preloadImage))).filter(Boolean);
-
+  const first = await loadImage(images[0]);
   if (runId !== bgRunId) return;
-
-  if (!loaded.length) {
-    stationBgError.textContent =
-      'Missing You background not found. Check picture/ filenames.';
+  if (!first) {
+    stationBgError.textContent = 'Background image could not be loaded.';
     stationBgError.style.display = 'block';
     return;
   }
 
-  // First image appears immediately.
   bgIndex = 0;
   bgShowingA = true;
-  stationBgA.style.backgroundImage = `url("${loaded[0]}")`;
+  stationBgA.style.backgroundImage = `url("${first}")`;
   stationBgA.classList.add('active');
 
-  if (loaded.length === 1) return;
+  if (images.length < 2) return;
 
-  bgTimer = setInterval(() => {
-    bgIndex = (bgIndex + 1) % loaded.length;
+  // Only keep one next image preloaded at a time: faster startup and lower memory use.
+  let nextLoaded = null;
+  const preloadNext = async () => {
+    const nextIndex = (bgIndex + 1) % images.length;
+    nextLoaded = await loadImage(images[nextIndex]);
+  };
+  preloadNext();
+
+  bgTimer = setInterval(async () => {
+    if (runId !== bgRunId) return;
+    const nextIndex = (bgIndex + 1) % images.length;
+    const src = nextLoaded || await loadImage(images[nextIndex]);
+    if (runId !== bgRunId || !src) return;
 
     const incoming = bgShowingA ? stationBgB : stationBgA;
     const outgoing = bgShowingA ? stationBgA : stationBgB;
-
-    incoming.style.backgroundImage = `url("${loaded[bgIndex]}")`;
-
-    // Force the browser to register the new background before the fade.
+    incoming.style.backgroundImage = `url("${src}")`;
     void incoming.offsetWidth;
-
     incoming.classList.add('active');
     outgoing.classList.remove('active');
-
     bgShowingA = !bgShowingA;
+    bgIndex = nextIndex;
+    nextLoaded = null;
+    preloadNext();
   }, BG_INTERVAL);
-}
-
-function applyStationTheme(index) {
-  const theme = STATIONS[index] && STATIONS[index].theme ? STATIONS[index].theme : 'rose';
-  document.body.setAttribute('data-theme', theme);
 }
 
 function goToStation(index, autoplay) {
@@ -1644,6 +1632,7 @@ function goToStation(index, autoplay) {
   applyStationTheme(index);
   currentStation = index;
   currentTrack = 0;
+  updateWhatsAppRequestLink();
   updateNeedle(index);
   updateDialLabels(index);
   updateFrequencyActive(index);
@@ -1769,11 +1758,20 @@ const requestSongLink = document.getElementById('song-request-link');
 const installAppButton = document.getElementById('install-app-button');
 const installHint = document.getElementById('install-hint');
 
-const REQUEST_MESSAGE =
-  "Hi KUKU RADIO 👋\n\nI want to request a song.\n\nSong name: \nStation / Playlist: \n\nPlease add it if possible. 🎵";
+function updateWhatsAppRequestLink() {
+  const station = STATIONS[currentStation];
+  const message = `Hi KUKU RADIO 👋
 
-requestSongLink.href =
-  "https://wa.me/?text=" + encodeURIComponent(REQUEST_MESSAGE);
+I want to request a song.
+
+Song name: 
+Station / Playlist: ${station.freq} · ${station.name}
+
+Please add it if possible. 🎵`;
+  requestSongLink.href = "https://wa.me/?text=" + encodeURIComponent(message);
+}
+
+updateWhatsAppRequestLink();
 
 let deferredInstallPrompt = null;
 
