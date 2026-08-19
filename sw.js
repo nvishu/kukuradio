@@ -1,6 +1,21 @@
-const CACHE_NAME = 'kuku-radio-v1';
-const CORE_ASSETS = ['./', './index.html'];
- 
+const CACHE_NAME = 'kuku-radio-v2';
+const CORE_ASSETS = [
+  './',
+  './index.html',
+  './css/base.css',
+  './css/themes.css',
+  './css/components.css',
+  './css/animations.css',
+  './js/app.js',
+  './js/player.js',
+  './js/dial.js',
+  './js/background.js',
+  './js/live-count.js',
+  './js/pwa.js',
+  './data/stations.json',
+  './manifest.webmanifest'
+];
+
 self.addEventListener('install', (event) => {
   self.skipWaiting();
   event.waitUntil(
@@ -9,7 +24,7 @@ self.addEventListener('install', (event) => {
       .catch(() => {})
   );
 });
- 
+
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys()
@@ -19,12 +34,12 @@ self.addEventListener('activate', (event) => {
       .then(() => self.clients.claim())
   );
 });
- 
+
 // Network-first so updates (new songs, images, code changes) show up right away;
 // falls back to cache only when offline.
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
- 
+
   event.respondWith(
     fetch(event.request)
       .then((response) => {
