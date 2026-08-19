@@ -1,0 +1,615 @@
+[
+  {
+    "freq": "88.1",
+    "name": "Late Night 90s",
+    "theme": "rose",
+    "backgroundImages": [
+      "picture/missing_0.png",
+      "picture/missing_5.png",
+      "picture/missing_6.png",
+      "picture/missing_7.png",
+      "picture/missing_8.png"
+    ],
+    "tracks": [
+      {
+        "title": "Aaja Mahiya",
+        "file": "audio/Aaja Mahiya.mp3"
+      },
+      {
+        "title": "Aankhein Khuli",
+        "file": "audio/Aankhein Khuli.mp3"
+      },
+      {
+        "title": "Ab Tere Dil Mein To",
+        "file": "audio/Ab Tere Dil Mein To.mp3"
+      },
+      {
+        "title": "Agar Aasman Tak Mere Haath Jaate",
+        "file": "audio/Agar Aasman Tak Mere Haath Jaate.mp3"
+      },
+      {
+        "title": "Akhiyaan Milaoon Kabhi",
+        "file": "audio/Akhiyaan Milaoon Kabhi.mp3"
+      },
+      {
+        "title": "Bahut Khoobsurat Ho",
+        "file": "audio/Bahut Khoobsurat Ho.mp3"
+      },
+      {
+        "title": "Bin Sajan Jhoola Jhulu",
+        "file": "audio/Bin Sajan Jhoola Jhulu.mp3"
+      },
+      {
+        "title": "Chalte Chalte",
+        "file": "audio/Chalte Chalte.mp3"
+      },
+      {
+        "title": "Chand Chhupa Badal Mein",
+        "file": "audio/Chand Chhupa Badal Mein.mp3"
+      },
+      {
+        "title": "Dil Hai Ki Manta Nahin",
+        "file": "audio/Dil Hai Ki Manta Nahin.mp3"
+      },
+      {
+        "title": "Dil Ka Rishta",
+        "file": "audio/Dil Ka Rishta.mp3"
+      },
+      {
+        "title": "Dil Laga Liya Maine",
+        "file": "audio/Dil Laga Liya Maine.mp3"
+      },
+      {
+        "title": "Dil Mere Naa",
+        "file": "audio/Dil Mere Naa.mp3"
+      },
+      {
+        "title": "Ek Ladki Ko Dekha",
+        "file": "audio/Ek Ladki Ko Dekha.mp3"
+      },
+      {
+        "title": "Gore Gore Mukhde Pe",
+        "file": "audio/Gore Gore Mukhde Pe.mp3"
+      },
+      {
+        "title": "Har Kisike Dil Mein",
+        "file": "audio/Har Kisike Dil Mein.mp3"
+      },
+      {
+        "title": "Ho Gaya Hai Tujhko To Pyar Sajna",
+        "file": "audio/Ho Gaya Hai Tujhko To Pyar Sajna.mp3"
+      },
+      {
+        "title": "Hum Apni Taraf Se",
+        "file": "audio/Hum Apni Taraf Se.mp3"
+      },
+      {
+        "title": "Hum Yaar Hai Tumhare",
+        "file": "audio/Hum Yaar Hai Tumhare.mp3"
+      },
+      {
+        "title": "Humko Humise Chura Lo",
+        "file": "audio/Humko Humise Chura Lo.mp3"
+      },
+      {
+        "title": "Jab Se Tumko Dekha",
+        "file": "audio/Jab Se Tumko Dekha.mp3"
+      },
+      {
+        "title": "Jo Bhi Kasmein",
+        "file": "audio/Jo Bhi Kasmein.mp3"
+      },
+      {
+        "title": "Kisi Din Banoongi Main",
+        "file": "audio/Kisi Din Banoongi Main.mp3"
+      },
+      {
+        "title": "Kisi Disco Mein Jaaye",
+        "file": "audio/Kisi Disco Mein Jaaye.mp3"
+      },
+      {
+        "title": "Koyal Si Teri Boli",
+        "file": "audio/Koyal Si Teri Boli.mp3"
+      },
+      {
+        "title": "Mat Poochh Mere Mehboob",
+        "file": "audio/Mat Poochh Mere Mehboob.mp3"
+      },
+      {
+        "title": "Mera Mann",
+        "file": "audio/Mera Mann.mp3"
+      },
+      {
+        "title": "Mere Khwabon Mein",
+        "file": "audio/Mere Khwabon Mein.mp3"
+      },
+      {
+        "title": "Mohabbat Ne Mohabbat Ko",
+        "file": "audio/Mohabbat Ne Mohabbat Ko.mp3"
+      },
+      {
+        "title": "Mujhe Neend Na Aaye",
+        "file": "audio/Mujhe Neend Na Aaye.mp3"
+      },
+      {
+        "title": "Mushkil Bada Yeh Pyaar Hai",
+        "file": "audio/Mushkil Bada Yeh Pyaar Hai.mp3"
+      },
+      {
+        "title": "Nazrein Mili Dil Dhadka",
+        "file": "audio/Nazrein Mili Dil Dhadka.mp3"
+      },
+      {
+        "title": "Pandit Ji Ne Haath Mera",
+        "file": "audio/Pandit Ji Ne Haath Mera.mp3"
+      },
+      {
+        "title": "Pehli Pehli Baar Mohabbat Ki Hai",
+        "file": "audio/Pehli Pehli Baar Mohabbat Ki Hai.mp3"
+      },
+      {
+        "title": "Phool Maangu Na Bahaar Maangu",
+        "file": "audio/Phool Maangu Na Bahaar Maangu.mp3"
+      },
+      {
+        "title": "Saanson Ka Chalna",
+        "file": "audio/Saanson Ka Chalna.mp3"
+      },
+      {
+        "title": "Saari Raat Teri Yaad",
+        "file": "audio/Saari Raat Teri Yaad.mp3"
+      },
+      {
+        "title": "Soni Soni",
+        "file": "audio/Soni Soni.mp3"
+      },
+      {
+        "title": "Tanhai Tanhai",
+        "file": "audio/Tanhai Tanhai.mp3"
+      },
+      {
+        "title": "Tare Hain Barati",
+        "file": "audio/Tare Hain Barati.mp3"
+      },
+      {
+        "title": "Teri Aankhon Ka Andaz",
+        "file": "audio/Teri Aankhon Ka Andaz.mp3"
+      },
+      {
+        "title": "Teri Aankhon Mein",
+        "file": "audio/Teri Aankhon Mein.mp3"
+      },
+      {
+        "title": "Tujhe Dekha To",
+        "file": "audio/Tujhe Dekha To.mp3"
+      },
+      {
+        "title": "Tumhein Apna Banane Ki Kasam Khai Hai",
+        "file": "audio/Tumhein Apna Banane Ki Kasam Khai Hai.mp3"
+      },
+      {
+        "title": "Sona Kitna Sona Hai",
+        "file": "audio_1/Sona Kitna Sona Hai.mp3"
+      },
+      {
+        "title": "Jaadu Teri Nazar",
+        "file": "audio_1/Jaadu Teri Nazar.mp3"
+      },
+      {
+        "title": "Rab Kare",
+        "file": "audio_1/Rab Kare.mp3"
+      },
+      {
+        "title": "Saiyonee",
+        "file": "audio_1/Saiyonee.mp3"
+      }
+    ]
+  },
+  {
+    "freq": "91.5",
+    "name": "Missing You",
+    "theme": "original",
+    "backgroundImages": [
+      "picture/missing_1.png",
+      "picture/missing_2.png",
+      "picture/missing_3.png",
+      "picture/missing_4.png"
+    ],
+    "tracks": [
+      {
+        "title": "Ajab Si",
+        "file": "audio/Ajab Si.mp3"
+      },
+      {
+        "title": "Banjaara",
+        "file": "audio/Banjaara.mp3"
+      },
+      {
+        "title": "Barbaad Reprise - Female",
+        "file": "audio/Barbaad Reprise - Female.mp3"
+      },
+      {
+        "title": "Bhula Dena",
+        "file": "audio/Bhula Dena.mp3"
+      },
+      {
+        "title": "Chahun Main Ya Naa",
+        "file": "audio/Chahun Main Ya Naa.mp3"
+      },
+      {
+        "title": "Dhun",
+        "file": "audio/Dhun.mp3"
+      },
+      {
+        "title": "Dil Kyun Yeh Mera",
+        "file": "audio/Dil_Kyun_Yeh_Mera.mp3"
+      },
+      {
+        "title": "Galliyan",
+        "file": "audio/Galliyan.mp3"
+      },
+      {
+        "title": "Haan Tu Hain",
+        "file": "audio/Haan Tu Hain.mp3"
+      },
+      {
+        "title": "Hum Mar Jayenge",
+        "file": "audio/Hum Mar Jayenge.mp3"
+      },
+      {
+        "title": "Humsafar",
+        "file": "audio/Humsafar.mp3"
+      },
+      {
+        "title": "I Am In Love",
+        "file": "audio/I Am In Love.mp3"
+      },
+      {
+        "title": "Kabhi Aayine Pe Likha Tujhe",
+        "file": "audio/Kabhi Aayine Pe Likha Tujhe.mp3"
+      },
+      {
+        "title": "Kaho Na Kaho",
+        "file": "audio/Kaho Na Kaho.mp3"
+      },
+      {
+        "title": "Kya Mujhe Pyar Hai",
+        "file": "audio/Kya Mujhe Pyar Hai.mp3"
+      },
+      {
+        "title": "Labon Ko",
+        "file": "audio/Labon Ko.mp3"
+      },
+      {
+        "title": "Milne Hai Mujhse Aayi",
+        "file": "audio/Milne Hai Mujhse Aayi.mp3"
+      },
+      {
+        "title": "Parbona",
+        "file": "audio/Parbona.mp3"
+      },
+      {
+        "title": "Piya Aaye Na",
+        "file": "audio/Piya Aaye Na.mp3"
+      },
+      {
+        "title": "Rab Ka Shukrana",
+        "file": "audio/Rab Ka Shukrana.mp3"
+      },
+      {
+        "title": "Saiyaara Reprise - Female",
+        "file": "audio/Saiyaara Reprise - Female.mp3"
+      },
+      {
+        "title": "Sajde",
+        "file": "audio/Sajde.mp3"
+      },
+      {
+        "title": "Soniye",
+        "file": "audio/Soniye.mp3"
+      },
+      {
+        "title": "Sunn Raha Hai",
+        "file": "audio/Sunn Raha Hai.mp3"
+      },
+      {
+        "title": "Sunn Raha Hai - Male",
+        "file": "audio/Sunn Raha Hai_male.mp3"
+      },
+      {
+        "title": "Aasan Nahin Yahan",
+        "file": "audio/Aasan Nahin Yahan.mp3"
+      },
+      {
+        "title": "Aashiqui Aa Gayi",
+        "file": "audio/Aashiqui Aa Gayi.mp3"
+      },
+      {
+        "title": "Aavan Jaavan",
+        "file": "audio/Aavan Jaavan.mp3"
+      },
+      {
+        "title": "Agar Tum Saath Ho",
+        "file": "audio/Agar Tum Saath Ho.mp3"
+      },
+      {
+        "title": "Akhiyaan Gulaab",
+        "file": "audio/Akhiyaan Gulaab.mp3"
+      },
+      {
+        "title": "Enna Sona",
+        "file": "audio/Enna Sona.mp3"
+      },
+      {
+        "title": "Ishq Bulaava",
+        "file": "audio/Ishq Bulaava.mp3"
+      },
+      {
+        "title": "Jeene Laga Hoon",
+        "file": "audio/Jeene Laga Hoon.mp3"
+      },
+      {
+        "title": "Jug Jug Jeeve",
+        "file": "audio/Jug Jug Jeeve.mp3"
+      },
+      {
+        "title": "Kaun Tujhe",
+        "file": "audio/Kaun Tujhe.mp3"
+      },
+      {
+        "title": "Subhanallah Yeh Jawaani Hai Deewani",
+        "file": "audio_1/Subhanallah Yeh Jawaani Hai Deewani.mp3"
+      },
+      {
+        "title": "Ilahi Yeh Jawaani Hai Deewani",
+        "file": "audio_1/Ilahi Yeh Jawaani Hai Deewani.mp3"
+      },
+      {
+        "title": "Kaise Mujhe Ghajini",
+        "file": "audio_1/Kaise Mujhe Ghajini.mp3"
+      },
+      {
+        "title": "Guzarish Ghajini",
+        "file": "audio_1/Guzarish Ghajini.mp3"
+      },
+      {
+        "title": "Ajj Din Chadheya Love Aaj Kal",
+        "file": "audio_1/Ajj Din Chadheya Love Aaj Kal.mp3"
+      },
+      {
+        "title": "Dooriyan Love Aaj Kal",
+        "file": "audio_1/Dooriyan Love Aaj Kal.mp3"
+      },
+      {
+        "title": "Khairiyat",
+        "file": "audio/Khairiyat.mp3"
+      },
+      {
+        "title": "Muskurane",
+        "file": "audio/Muskurane.mp3"
+      },
+      {
+        "title": "Rabba Main Toh Mar Gaya Oye",
+        "file": "audio/Rabba Main Toh Mar Gaya Oye.mp3"
+      },
+      {
+        "title": "Saanson Ko",
+        "file": "audio/Saanson Ko.mp3"
+      },
+      {
+        "title": "Sajni",
+        "file": "audio/Sajni.mp3"
+      },
+      {
+        "title": "Tera Hone Laga Hoon",
+        "file": "audio/Tera Hone Laga Hoon.mp3"
+      },
+      {
+        "title": "Tu Har Lamha",
+        "file": "audio/Tu Har Lamha.mp3"
+      },
+      {
+        "title": "Tu Zaroori",
+        "file": "audio/Tu Zaroori.mp3"
+      },
+      {
+        "title": "Tum Se",
+        "file": "audio/Tum Se.mp3"
+      },
+      {
+        "title": "Tera Deedar Hua",
+        "file": "audio/Tera Deedar Hua.mp3"
+      },
+      {
+        "title": "Tu Hi Mera",
+        "file": "audio/Tu Hi Mera.mp3"
+      },
+      {
+        "title": "Shayad Love Aaj Kal",
+        "file": "audio_1/Shayad Love Aaj Kal.mp3"
+      },
+      {
+        "title": "Tu Jo Mila",
+        "file": "audio/Tu Jo Mila.mp3"
+      },
+      {
+        "title": "Tujhe Sochta Hoon",
+        "file": "audio/Tujhe Sochta Hoon.mp3"
+      },
+      {
+        "title": "Tum Hi Ho",
+        "file": "audio/Tum Hi Ho.mp3"
+      },
+      {
+        "title": "Zara Sa",
+        "file": "audio/Zara Sa.mp3"
+      },
+      {
+        "title": "Zaroorat",
+        "file": "audio/Zaroorat.mp3"
+      }
+    ]
+  },
+  {
+    "freq": "94.7",
+    "name": "Bhojpuri Melody",
+    "theme": "sky",
+    "backgroundImages": [
+      "picture/missing_5.png",
+      "picture/missing_6.png"
+    ],
+    "tracks": [
+      {
+        "title": "Piya Ji Ke Muski",
+        "file": "audio/Piya Ji Ke Muski.mp3"
+      },
+      {
+        "title": "Palkan Ki Chaav Mein",
+        "file": "audio/Palkan Ki Chaav Mein.mp3"
+      },
+      {
+        "title": "Tani Dekhal Kari",
+        "file": "audio/Tani Dekhal Kari.mp3"
+      },
+      {
+        "title": "Palang Sagwan Ke",
+        "file": "audio/Palang Sagwan Ke.mp3"
+      },
+      {
+        "title": "Aara Ke Othlali Lagawalu",
+        "file": "audio/Aara Ke Othlali Lagawalu.mp3"
+      },
+      {
+        "title": "Babuaan",
+        "file": "audio/Babuaan.mp3"
+      },
+      {
+        "title": "Dhani Ho Sab Dhan",
+        "file": "audio/Dhani Ho Sab Dhan.mp3"
+      },
+      {
+        "title": "Hamaar Dulhaniya Kamaal Badu",
+        "file": "audio/Hamaar Dulhaniya Kamaal Badu.mp3"
+      },
+      {
+        "title": "Hari Hari Odhani",
+        "file": "audio/Hari Hari Odhani.mp3"
+      },
+      {
+        "title": "Laal Ghaghra",
+        "file": "audio/Laal Ghaghra.mp3"
+      },
+      {
+        "title": "Maroon Color Sadiya",
+        "file": "audio/Maroon Color Sadiya.mp3"
+      },
+      {
+        "title": "Mehari Ke Sukh Nahi Debu",
+        "file": "audio/Mehari Ke Sukh Nahi Debu.mp3"
+      },
+      {
+        "title": "Piyar Farak Wali",
+        "file": "audio/Piyar Farak Wali.mp3"
+      },
+      {
+        "title": "RajaJi Ke Dilwa",
+        "file": "audio/RajaJi Ke Dilwa.mp3"
+      }
+    ]
+  },
+  {
+    "freq": "97.3",
+    "name": "Universal Destiny",
+    "theme": "brown",
+    "backgroundImages": [
+      "picture/missing_9.png",
+      "picture/missing_10.png",
+      "picture/missing_11.png",
+      "picture/missing_12.png"
+    ],
+    "tracks": [
+      {
+        "title": "Ed Sheeran - Perfect",
+        "file": "audio/Ed Sheeran - Perfect.mp3"
+      },
+      {
+        "title": "Christina_Perry_feat_Steve_Kazee",
+        "file": "audio_1/Christina_Perry_feat_Steve_Kazee.mp3"
+      },
+      {
+        "title": "Agar Tum Saath Ho",
+        "file": "audio/Agar Tum Saath Ho.mp3"
+      },
+      {
+        "title": "Shayad Love Aaj Kal",
+        "file": "audio_1/Shayad Love Aaj Kal.mp3"
+      },
+      {
+        "title": "Ami Tomakei Boley Debo - Sanjeeb Choudhury",
+        "file": "audio_1/Ami Tomakei Boley Debo - Sanjeeb Choudhury.mp3"
+      },
+      {
+        "title": "Eita Tomar Gaan",
+        "file": "audio_1/Eita Tomar Gaan.mp3"
+      },
+      {
+        "title": "Kaavish - Faasle (Studio Version)",
+        "file": "audio_1/Kaavish - Faasle (Studio Version).mp3"
+      },
+      {
+        "title": "Kaavish_-_Tere_Pyar_Main",
+        "file": "audio_1/Kaavish_-_Tere_Pyar_Main.mp3"
+      },
+      {
+        "title": "Sei-tumi-keno-eto-ochena-hole",
+        "file": "audio_1/Sei-tumi-keno-eto-ochena-hole.mp3"
+      },
+      {
+        "title": "Subhanallah Yeh Jawaani Hai Deewani",
+        "file": "audio_1/Subhanallah Yeh Jawaani Hai Deewani.mp3"
+      },
+      {
+        "title": "Ilahi Yeh Jawaani Hai Deewani",
+        "file": "audio_1/Ilahi Yeh Jawaani Hai Deewani.mp3"
+      },
+      {
+        "title": "Dooriyan Love Aaj Kal",
+        "file": "audio_1/Dooriyan Love Aaj Kal.mp3"
+      },
+      {
+        "title": "Tomar-Chokher-Kalo",
+        "file": "audio_1/Tomar-Chokher-Kalo.mp3"
+      },
+      {
+        "title": "Ami Tomaro Shonge Bedhechi",
+        "file": "audio_1/Ami Tomaro Shonge Bedhechi.mp3"
+      },
+      {
+        "title": "Jibon-Khatar-Proti-Patay",
+        "file": "audio_1/Jibon-Khatar-Proti-Patay.mp3"
+      },
+      {
+        "title": "Kahin Door Jab Din Dhal Jaye",
+        "file": "audio_1/Kahin Door Jab Din Dhal Jaye.mp3"
+      },
+      {
+        "title": "Jahan Mein Aesa Kaun Hai Hum Dono",
+        "file": "audio_1/Jahan Mein Aesa Kaun Hai Hum Dono.mp3"
+      }
+    ]
+  },
+  {
+    "freq": "100.1",
+    "name": "Punjabi Funk",
+    "theme": "funky",
+    "backgroundImages": [],
+    "tracks": []
+  },
+  {
+    "freq": "103.5",
+    "name": "Party Vibes",
+    "theme": "party",
+    "backgroundImages": [],
+    "tracks": []
+  }
+]
