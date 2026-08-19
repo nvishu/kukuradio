@@ -1,0 +1,107 @@
+/* =========================================================================
+   KUKU RADIO — motion
+   -------------------------------------------------------------------------
+   Every @keyframes block lives here, plus one consolidated
+   prefers-reduced-motion override so every ambient/looping animation in
+   the app is silenced in one place instead of three scattered blocks.
+
+   Direct, user-triggered feedback (button press scales, focus rings) is
+   NOT muted by reduced-motion — that's standard accessibility practice:
+   reduced-motion targets autoplaying/looping/parallax movement, not an
+   instant response to someone's own tap.
+   ========================================================================= */
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.15; transform: scale(0.85); }
+  50% { opacity: 0.85; transform: scale(1.1); }
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+@keyframes bar-bounce {
+  0%, 100% { height: 4px; }
+  50% { height: 16px; }
+}
+
+/* Now-playing title reveal — plays each time the track actually changes,
+   never on first paint (JS adds/removes the class), so it reads as
+   "something new just started" rather than a page-load flourish. */
+@keyframes title-reveal {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Live-count number ticks up/down every so often; this is the same
+   restrained "pop" language as pulse-dot, just applied to a number. */
+@keyframes count-pop {
+  0% { transform: scale(1); }
+  30% { transform: scale(1.18); }
+  100% { transform: scale(1); }
+}
+
+/* Tuning-dial sweep veil, shown briefly while the needle travels between
+   stations on first load. */
+@keyframes veil-fade {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+.star {
+  animation: twinkle ease-in-out infinite;
+}
+
+.on-air-dot,
+.live-dot {
+  animation: pulse-dot 2.4s ease-in-out infinite;
+}
+
+.eq-bars span {
+  animation: bar-bounce 1s ease-in-out infinite;
+  animation-play-state: paused;
+}
+
+.eq-bars.playing span {
+  animation-play-state: running;
+}
+
+.track-title.changed {
+  animation: title-reveal 0.4s ease;
+}
+
+#live-count-number.changed {
+  animation: count-pop 0.4s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .station-bg-layer {
+    transition: none;
+    transform: none;
+  }
+  .star {
+    animation: none;
+    opacity: 0.4;
+  }
+  .on-air-dot,
+  .live-dot {
+    animation: none;
+  }
+  #needle-group {
+    transition: none;
+  }
+  .eq-bars span {
+    animation: none;
+    height: 10px;
+  }
+  .quick-link {
+    transition: none !important;
+  }
+  .track-title.changed {
+    animation: none;
+  }
+  #live-count-number.changed {
+    animation: none;
+  }
+}

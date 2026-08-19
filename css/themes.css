@@ -1,0 +1,157 @@
+/* =========================================================================
+   KUKU RADIO — theme tokens
+   -------------------------------------------------------------------------
+   Every color in the app is one of these custom properties. JS sets
+   body[data-theme] when the station changes; :root is the default shown
+   for the first paint, before JS runs (Late Night 90s / rose).
+
+   To add a new station theme: copy one block, give it a new data-theme
+   name, pick new values, then reference that same name as the "theme"
+   field for the station in data/stations.json.
+   ========================================================================= */
+
+:root {
+  --bg-deep: #170812;
+  --bg-deep-rgb: 23, 8, 18;
+  --bg-violet: #3d0f30;
+  --bg-violet-2: #5c1442;
+  --glow-amber: #ff3f6c;
+  --glow-amber-rgb: 255, 63, 108;
+  --glow-amber-dim: rgba(255, 63, 108, 0.35);
+  --blush-rose: #ff8a3d;
+  --blush-rose-rgb: 255, 138, 61;
+  --soft-lavender: #ffcf5c;
+  --cream: #fff6f0;
+  --cream-rgb: 255, 246, 240;
+  --cream-dim: rgba(255, 246, 240, 0.66);
+  --cream-faint: rgba(255, 246, 240, 0.36);
+  --glass-bg: rgba(255, 246, 240, 0.06);
+  --glass-border: rgba(255, 158, 180, 0.18);
+  --shadow-deep: rgba(20, 3, 12, 0.55);
+}
+
+/* Station — "Late Night 90s" — rose-red / coral-orange / gold */
+body[data-theme="rose"] {
+  --bg-deep: #170812;
+  --bg-deep-rgb: 23, 8, 18;
+  --bg-violet: #3d0f30;
+  --bg-violet-2: #5c1442;
+  --glow-amber: #ff3f6c;
+  --glow-amber-rgb: 255, 63, 108;
+  --glow-amber-dim: rgba(255, 63, 108, 0.35);
+  --blush-rose: #ff8a3d;
+  --blush-rose-rgb: 255, 138, 61;
+  --soft-lavender: #ffcf5c;
+  --cream: #fff6f0;
+  --cream-rgb: 255, 246, 240;
+  --cream-dim: rgba(255, 246, 240, 0.66);
+  --cream-faint: rgba(255, 246, 240, 0.36);
+  --glass-bg: rgba(255, 246, 240, 0.06);
+  --glass-border: rgba(255, 158, 180, 0.18);
+  --shadow-deep: rgba(20, 3, 12, 0.55);
+}
+
+/* Station — "Missing You" — amber / dark-violet */
+body[data-theme="original"] {
+  --bg-deep: #0a141f;
+  --bg-deep-rgb: 10, 20, 31;
+  --bg-violet: #13293d;
+  --bg-violet-2: #1e415c;
+  --glow-amber: #4fc3f7;
+  --glow-amber-rgb: 79, 195, 247;
+  --glow-amber-dim: rgba(79, 195, 247, 0.35);
+  --blush-rose: #cfeaf7;
+  --blush-rose-rgb: 207, 234, 247;
+  --soft-lavender: #9fb9c9;
+  --cream: #f4f9fb;
+  --cream-rgb: 244, 249, 251;
+  --cream-dim: rgba(244, 249, 251, 0.66);
+  --cream-faint: rgba(244, 249, 251, 0.36);
+  --glass-bg: rgba(244, 249, 251, 0.06);
+  --glass-border: rgba(180, 210, 225, 0.18);
+  --shadow-deep: rgba(3, 8, 14, 0.55);
+}
+
+/* Station — "Bhojpuri Melody" — magenta / lime */
+body[data-theme="sky"] {
+  --bg-deep: #160b24;
+  --bg-deep-rgb: 22, 11, 36;
+  --bg-violet: #3a124f;
+  --bg-violet-2: #671b70;
+  --glow-amber: #ff4fd8;
+  --glow-amber-rgb: 255, 79, 216;
+  --glow-amber-dim: rgba(255, 79, 216, 0.38);
+  --blush-rose: #8cff4f;
+  --blush-rose-rgb: 140, 255, 79;
+  --soft-lavender: #e2b7ff;
+  --cream: #fff5ff;
+  --cream-rgb: 255, 245, 255;
+  --cream-dim: rgba(255, 245, 255, 0.68);
+  --cream-faint: rgba(255, 245, 255, 0.38);
+  --glass-bg: rgba(255, 245, 255, 0.075);
+  --glass-border: rgba(255, 79, 216, 0.24);
+  --shadow-deep: rgba(13, 3, 20, 0.58);
+}
+
+/* Station — "Punjabi Funk" — electric purple / magenta / lime */
+body[data-theme="funky"] {
+  --bg-deep: #0f0e1a;
+  --bg-deep-rgb: 15, 14, 26;
+  --bg-violet: #241f42;
+  --bg-violet-2: #2e2555;
+  --glow-amber: #f2b166;
+  --glow-amber-rgb: 242, 177, 102;
+  --glow-amber-dim: rgba(242, 177, 102, 0.35);
+  --blush-rose: #e8879a;
+  --blush-rose-rgb: 232, 135, 154;
+  --soft-lavender: #c9b6e4;
+  --cream: #f7ede0;
+  --cream-rgb: 247, 237, 224;
+  --cream-dim: rgba(247, 237, 224, 0.62);
+  --cream-faint: rgba(247, 237, 224, 0.34);
+  --glass-bg: rgba(247, 237, 224, 0.055);
+  --glass-border: rgba(247, 237, 224, 0.13);
+  --shadow-deep: rgba(5, 4, 12, 0.55);
+}
+
+/* Station — "Party Vibes" — electric teal / coral / gold */
+body[data-theme="party"] {
+  --bg-deep: #051a1c;
+  --bg-deep-rgb: 5, 26, 28;
+  --bg-violet: #0d3438;
+  --bg-violet-2: #124a4f;
+  --glow-amber: #2dd4bf;
+  --glow-amber-rgb: 45, 212, 191;
+  --glow-amber-dim: rgba(45, 212, 191, 0.36);
+  --blush-rose: #ff6b6b;
+  --blush-rose-rgb: 255, 107, 107;
+  --soft-lavender: #ffc857;
+  --cream: #f0fffd;
+  --cream-rgb: 240, 255, 253;
+  --cream-dim: rgba(240, 255, 253, 0.68);
+  --cream-faint: rgba(240, 255, 253, 0.38);
+  --glass-bg: rgba(240, 255, 253, 0.075);
+  --glass-border: rgba(120, 230, 220, 0.22);
+  --shadow-deep: rgba(2, 12, 13, 0.58);
+}
+
+/* Station — "Universal Destiny" — brown / gray / white */
+body[data-theme="brown"] {
+  --bg-deep: #150f0c;
+  --bg-deep-rgb: 21, 15, 12;
+  --bg-violet: #2c1f17;
+  --bg-violet-2: #40291b;
+  --glow-amber: #cf9a5c;
+  --glow-amber-rgb: 207, 154, 92;
+  --glow-amber-dim: rgba(207, 154, 92, 0.35);
+  --blush-rose: #b7a68f;
+  --blush-rose-rgb: 183, 166, 143;
+  --soft-lavender: #9c8f80;
+  --cream: #f4efe7;
+  --cream-rgb: 244, 239, 231;
+  --cream-dim: rgba(244, 239, 231, 0.66);
+  --cream-faint: rgba(244, 239, 231, 0.36);
+  --glass-bg: rgba(244, 239, 231, 0.06);
+  --glass-border: rgba(205, 188, 168, 0.18);
+  --shadow-deep: rgba(10, 6, 4, 0.55);
+}

@@ -1,0 +1,94 @@
+/* =========================================================================
+   KUKU RADIO — base
+   -------------------------------------------------------------------------
+   Reset, page background, and the responsive shell. Component-level
+   styles live in components.css; keyframes live in animations.css.
+   ========================================================================= */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  width: 100%;
+  min-height: 100%;
+  min-width: 320px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-text-size-adjust: 100%;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100svh;
+  min-height: 100dvh;
+  background:
+    radial-gradient(ellipse 90% 60% at 50% -10%, var(--bg-violet-2) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 50% at 85% 15%, rgba(var(--blush-rose-rgb), 0.14) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 40% at 8% 96%, rgba(var(--glow-amber-rgb), 0.12) 0%, transparent 55%),
+    linear-gradient(180deg, var(--bg-deep) 0%, var(--bg-violet) 55%, var(--bg-deep) 100%);
+  color: var(--cream);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  overflow-x: hidden;
+  overflow-y: auto;
+  position: relative;
+  touch-action: pan-y;
+  overscroll-behavior-x: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.9s ease, color 0.9s ease;
+}
+
+button,
+input,
+a {
+  touch-action: manipulation;
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--glow-amber);
+  outline-offset: 2px;
+}
+
+/* ---------- Layout shell ---------- */
+main {
+  position: relative;
+  z-index: 1;
+  width: min(720px, calc(100vw - 32px));
+  max-width: 720px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding:
+    max(2rem, env(safe-area-inset-top))
+    max(1rem, env(safe-area-inset-right))
+    calc(4rem + env(safe-area-inset-bottom))
+    max(1rem, env(safe-area-inset-left));
+}
+
+@media (max-width: 900px) {
+  main {
+    padding-bottom: 7.5rem;
+  }
+}
+
+@media (max-width: 600px) {
+  main {
+    padding-top: max(1.4rem, env(safe-area-inset-top));
+  }
+}
+
+@media (pointer: coarse) {
+  .freq-btn,
+  .quick-link,
+  .install-button {
+    min-height: 44px;
+  }
+}
