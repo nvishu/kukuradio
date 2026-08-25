@@ -88,7 +88,8 @@ main {
 @media (pointer: coarse) {
   .freq-btn,
   .quick-link,
-  .install-button {
+  .install-button,
+  #tracklist li button {
     min-height: 44px;
   }
 }

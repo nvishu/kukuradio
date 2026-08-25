@@ -555,6 +555,92 @@ h1.wordmark {
   cursor: pointer;
 }
 
+/* ---------- Tracklist ---------- */
+.tracklist-section {
+  width: 100%;
+  margin-top: 1.8rem;
+  padding-bottom: 8rem;
+  position: relative;
+  z-index: 4;
+}
+
+.tracklist-heading {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cream-faint);
+  margin-bottom: 0.8rem;
+  transition: color 0.9s ease;
+}
+
+#tracklist {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  width: 100%;
+  min-height: 1px;
+  overflow: visible;
+}
+
+#tracklist .empty-note {
+  display: block;
+  width: 100%;
+  padding: .9rem 0 1.2rem;
+  color: var(--cream-faint);
+  font-size: .82rem;
+  font-style: italic;
+  line-height: 1.55;
+  transition: color 0.9s ease;
+}
+
+#tracklist li button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  padding: 0.65rem 0.8rem;
+  color: var(--cream-dim);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.9rem;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.2s ease, border-color 0.2s ease, color 0.9s ease;
+}
+
+#tracklist li button:hover {
+  background: var(--glass-bg);
+  border-color: var(--glass-border);
+}
+
+#tracklist li button:active {
+  transform: scale(0.99);
+}
+
+#tracklist li button.active {
+  background: var(--glass-bg);
+  border-color: var(--glow-amber-dim);
+  color: var(--cream);
+}
+
+#tracklist li button:focus-visible {
+  outline: 2px solid var(--glow-amber);
+  outline-offset: -2px;
+}
+
+.track-index {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--cream-faint);
+  width: 1.4rem;
+  flex-shrink: 0;
+  transition: color 0.9s ease;
+}
+
 /* ---------- Quick links / PWA install ---------- */
 .quick-links {
   position: fixed;
@@ -696,6 +782,10 @@ footer {
     height: 30px;
     flex-basis: 30px;
   }
+
+  .tracklist-section {
+    padding-bottom: 8rem;
+  }
 }
 
 @media (max-width: 600px) {
@@ -747,6 +837,12 @@ footer {
   #btn-play {
     width: 58px;
     height: 58px;
+  }
+
+  #tracklist li button {
+    padding: .7rem .55rem;
+    gap: .55rem;
+    font-size: .82rem;
   }
 }
 
