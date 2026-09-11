@@ -217,6 +217,30 @@
     ],
     "tracks": [
       {
+        "title": "Kaise Bataun Tujhe",
+        "file": "audio_1/Kaise Bataun Tujhe.mp3"
+      },
+       {
+        "title": "Kya Crook",
+        "file": "audio_1/Kya Crook.mp3"
+      },
+       {
+        "title": "Mere Bina",
+        "file": "audio_1/Mere Bina.mp3"
+      },
+       {
+        "title": "Bakhuda Tumhi Ho",
+        "file": "audio_1/Bakhuda Tumhi Ho.mp3"
+      },
+       {
+        "title": "Tujhi Mein",
+        "file": "audio_1/Tujhi Mein.mp3"
+      },
+       {
+        "title": "Is This Love",
+        "file": "audio_1/Is This Love.mp3"
+      },
+       {
         "title": "Ajab Si",
         "file": "audio/Ajab Si.mp3"
       },
