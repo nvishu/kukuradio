@@ -666,6 +666,11 @@
     "name": "Party Vibes",
     "theme": "party",
     "backgroundImages": [],
-    "tracks": []
+    "tracks": [
+      {
+        "title": "Tu Mil Jaaye",
+        "file": "audio_1/Tu Mil Jaaye.mp3"
+      }
+    ]
   }
 ]
