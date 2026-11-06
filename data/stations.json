@@ -665,7 +665,10 @@
     "freq": "103.5",
     "name": "Party Vibes",
     "theme": "party",
-    "backgroundImages": [],
+    "backgroundImages": [
+      "picture/missing_13.png",
+      "picture/missing_14.png"
+    ],
     "tracks": [
       {
         "title": "Tu Mil Jaaye",
