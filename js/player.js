@@ -1,12 +1,11 @@
 /* =========================================================================
    KUKU RADIO — js/player.js
    -------------------------------------------------------------------------
-   Optimized shuffle-bag radio player with:
-   - Lock-screen / headphone controls via navigator.mediaSession
-   - Pointer drag scrubbing on the progress bar
-   - Differential tracklist updates (no full DOM rebuild on song change)
-   - Next-track audio preloading & automatic error recovery
-   - Saved volume & station state in localStorage
+   Fully wired to all CSS hooks in components.css & animations.css:
+   - Toggles .is-playing and .is-buffering on #btn-play
+   - Sets --i on #tracklist li for first-paint stagger, then body.is-rendered
+   - Syncs <meta name="theme-color"> with the active station's --bg-deep
+   - Full ARIA slider support (aria-valuetext + Arrow/Home/End keys)
    ========================================================================= */
 
 import { updateNeedle, updateDialLabels, updateFrequencyActive } from './dial.js';
@@ -17,6 +16,15 @@ const ICON_PAUSE = '<path d="M6 5h4v14H6zm8 0h4v14h-4z"/>';
 const STORAGE_VOL_KEY = 'kuku-volume';
 const STORAGE_STATION_KEY = 'kuku-station';
 const MAX_HISTORY = 50;
+
+const THEME_META_COLORS = {
+  rose: '#170812',
+  original: '#0a141f',
+  sky: '#160b24',
+  funky: '#0f0e1a',
+  party: '#051a1c',
+  brown: '#150f0c'
+};
 
 const audio = document.getElementById('audio-player');
 const npFreqLabel = document.getElementById('np-freq-label');
@@ -34,6 +42,7 @@ const playIcon = document.getElementById('play-icon');
 const volumeSlider = document.getElementById('volume-slider');
 const tracklistEl = document.getElementById('tracklist');
 const tracklistHeading = document.querySelector('.tracklist-heading');
+const themeMeta = document.querySelector('meta[name="theme-color"]');
 
 const preloadAudio = new Audio();
 preloadAudio.preload = 'metadata';
@@ -59,7 +68,6 @@ function shuffledIndices(length, avoidFirst) {
 }
 
 export function initPlayer(stations) {
-  // Restore persisted volume
   const savedVol = localStorage.getItem(STORAGE_VOL_KEY);
   if (savedVol !== null && !isNaN(parseFloat(savedVol))) {
     volumeSlider.value = savedVol;
@@ -69,6 +77,7 @@ export function initPlayer(stations) {
   let currentStation = 0;
   let currentTrack = null;
   let renderedStationIdx = -1;
+  let hasCompletedFirstPaint = false;
   let trackButtons = [];
   let bag = [];
   let history = [];
@@ -120,6 +129,14 @@ export function initPlayer(stations) {
     npTitle.classList.add('changed');
   }
 
+  function setSubtitle(text) {
+    npSubtitle.textContent = text;
+    npSubtitle.hidden = false;
+    npSubtitle.classList.remove('changed');
+    void npSubtitle.offsetWidth;
+    npSubtitle.classList.add('changed');
+  }
+
   function syncMediaSession(station, track) {
     if (!('mediaSession' in navigator)) return;
     if (!track) {
@@ -138,8 +155,7 @@ export function initPlayer(stations) {
   function preloadNextInBag() {
     const station = stations[currentStation];
     if (!station || !station.tracks.length || !bag.length) return;
-    const nextIdx = bag[0];
-    const nextTrackObj = station.tracks[nextIdx];
+    const nextTrackObj = station.tracks[bag[0]];
     if (nextTrackObj?.file) {
       preloadAudio.src = encodeURI(nextTrackObj.file);
     }
@@ -147,6 +163,7 @@ export function initPlayer(stations) {
 
   function loadCurrentTrack() {
     clearTimeout(errorSkipTimer);
+    btnPlay.classList.remove('is-buffering');
     const station = stations[currentStation];
     npFreqLabel.textContent = `${station.freq} · ${station.name}`;
 
@@ -154,8 +171,7 @@ export function initPlayer(stations) {
       audio.removeAttribute('src');
       audio.load();
       setTitle("This frequency's still quiet", { empty: true });
-      npSubtitle.textContent = 'New songs are on the way';
-      npSubtitle.hidden = false;
+      setSubtitle('New songs are on the way');
       setControlsEnabled(false);
       updateProgressUI(0, 0);
       syncMediaSession(station, null);
@@ -174,7 +190,6 @@ export function initPlayer(stations) {
     preloadNextInBag();
   }
 
-  // Only rebuilds DOM nodes when switching stations; otherwise just updates active class
   function renderOrUpdateTracklist(forceRebuild = false) {
     const station = stations[currentStation];
 
@@ -210,6 +225,8 @@ export function initPlayer(stations) {
     const fragment = document.createDocumentFragment();
     station.tracks.forEach((track, i) => {
       const li = document.createElement('li');
+      li.style.setProperty('--i', String(i));
+
       const btn = document.createElement('button');
       const index = document.createElement('span');
       const title = document.createElement('span');
@@ -221,6 +238,7 @@ export function initPlayer(stations) {
 
       index.className = 'track-index';
       index.textContent = String(i + 1).padStart(2, '0');
+      title.className = 'track-name';
       title.textContent = track.title;
 
       btn.append(index, title);
@@ -230,9 +248,14 @@ export function initPlayer(stations) {
     });
 
     tracklistEl.appendChild(fragment);
+
+    // Disable entrance stagger on subsequent station switches (animations.css §5)
+    if (!hasCompletedFirstPaint) {
+      hasCompletedFirstPaint = true;
+      setTimeout(() => document.body.classList.add('is-rendered'), 800);
+    }
   }
 
-  // Event delegation on tracklist (1 listener instead of N listeners)
   tracklistEl.addEventListener('click', (e) => {
     const btn = e.target.closest('button[data-track-idx]');
     if (!btn) return;
@@ -264,6 +287,9 @@ export function initPlayer(stations) {
   function applyStationTheme(index) {
     const theme = stations[index]?.theme || 'rose';
     document.body.setAttribute('data-theme', theme);
+    if (themeMeta && THEME_META_COLORS[theme]) {
+      themeMeta.setAttribute('content', THEME_META_COLORS[theme]);
+    }
   }
 
   function goToStation(index, autoplay) {
@@ -283,7 +309,7 @@ export function initPlayer(stations) {
     history = [];
     historyPos = -1;
     bag = [];
-    renderedStationIdx = -1; // Force tracklist rebuild for the new station
+    renderedStationIdx = -1;
 
     updateNeedle(index, stations.length);
     updateDialLabels(index);
@@ -336,6 +362,7 @@ export function initPlayer(stations) {
   function pauseAudio() {
     audio.pause();
     isPlaying = false;
+    btnPlay.classList.remove('is-buffering');
     updatePlayUI();
   }
 
@@ -346,6 +373,7 @@ export function initPlayer(stations) {
   function updatePlayUI() {
     playIcon.innerHTML = isPlaying ? ICON_PAUSE : ICON_PLAY;
     btnPlay.setAttribute('aria-label', isPlaying ? 'Pause' : 'Play');
+    btnPlay.classList.toggle('is-playing', isPlaying);
     eqBars.classList.toggle('playing', isPlaying);
     if ('mediaSession' in navigator) {
       navigator.mediaSession.playbackState = isPlaying ? 'playing' : 'paused';
@@ -354,11 +382,15 @@ export function initPlayer(stations) {
 
   function updateProgressUI(current, duration) {
     const pct = duration ? Math.min(Math.max((current / duration) * 100, 0), 100) : 0;
+    const curText = formatTime(current);
+    const durText = formatTime(duration);
+
     progressFill.style.width = `${pct}%`;
     progressBar.style.setProperty('--knob-pos', `${pct}%`);
     progressBar.setAttribute('aria-valuenow', String(Math.round(pct)));
-    timeCurrent.textContent = formatTime(current);
-    timeDuration.textContent = formatTime(duration);
+    progressBar.setAttribute('aria-valuetext', `${curText} of ${durText}`);
+    timeCurrent.textContent = curText;
+    timeDuration.textContent = durText;
   }
 
   // --- Audio Element Listeners ---
@@ -368,7 +400,19 @@ export function initPlayer(stations) {
   audio.addEventListener('loadedmetadata', () => updateProgressUI(audio.currentTime, audio.duration));
   audio.addEventListener('ended', nextTrack);
   audio.addEventListener('play', () => { isPlaying = true; updatePlayUI(); });
-  audio.addEventListener('pause', () => { isPlaying = false; updatePlayUI(); });
+  audio.addEventListener('playing', () => {
+    isPlaying = true;
+    btnPlay.classList.remove('is-buffering');
+    updatePlayUI();
+  });
+  audio.addEventListener('waiting', () => {
+    if (isPlaying) btnPlay.classList.add('is-buffering');
+  });
+  audio.addEventListener('pause', () => {
+    isPlaying = false;
+    btnPlay.classList.remove('is-buffering');
+    updatePlayUI();
+  });
 
   audio.addEventListener('error', () => {
     const station = stations[currentStation];
@@ -378,24 +422,22 @@ export function initPlayer(stations) {
     console.warn('[KUKU RADIO] Audio could not be loaded:', track.file);
     consecutiveErrors++;
     isPlaying = false;
+    btnPlay.classList.remove('is-buffering');
     updatePlayUI();
 
-    // Circuit breaker: don't loop infinitely if every file on the station is offline
     if (consecutiveErrors >= station.tracks.length) {
-      npSubtitle.textContent = 'Unable to load tracks right now — check your connection';
-      npSubtitle.hidden = false;
+      setSubtitle('Unable to load tracks right now — check your connection');
       return;
     }
 
-    npSubtitle.textContent = "Couldn't load that one — skipping ahead";
-    npSubtitle.hidden = false;
+    setSubtitle("Couldn't load that one — skipping ahead");
     if (station.tracks.length > 1) {
       clearTimeout(errorSkipTimer);
       errorSkipTimer = setTimeout(nextTrack, 1100);
     }
   });
 
-  // --- Smooth Pointer Drag Scrubbing on Progress Bar ---
+  // --- Pointer Drag Scrubbing ---
   function seekFromPointer(clientX) {
     if (!audio.duration) return;
     const rect = progressBar.getBoundingClientRect();
@@ -431,10 +473,15 @@ export function initPlayer(stations) {
     } else if (e.key === 'ArrowLeft') {
       e.preventDefault();
       audio.currentTime = Math.max(audio.currentTime - 5, 0);
+    } else if (e.key === 'Home') {
+      e.preventDefault();
+      audio.currentTime = 0;
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      audio.currentTime = audio.duration;
     }
   });
 
-  // --- Hardware / Lock-Screen MediaSession Handlers ---
   if ('mediaSession' in navigator) {
     navigator.mediaSession.setActionHandler('play', playAudio);
     navigator.mediaSession.setActionHandler('pause', pauseAudio);
@@ -447,7 +494,6 @@ export function initPlayer(stations) {
     });
   }
 
-  // --- Global Keyboard Shortcuts (Space = Play/Pause, M = Mute) ---
   document.addEventListener('keydown', (e) => {
     const tag = document.activeElement?.tagName;
     if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || tag === 'BUTTON') return;
