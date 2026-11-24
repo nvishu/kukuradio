@@ -3,9 +3,29 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+<!-- Security: CSP + hardening -->
+<meta http-equiv="Content-Security-Policy" content="
+  default-src 'self';
+  script-src 'self';
+  style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+  font-src 'self' https://fonts.gstatic.com;
+  img-src 'self' data: blob: https:;
+  media-src 'self' blob: https:;
+  connect-src 'self';
+  base-uri 'self';
+  form-action 'self';
+  object-src 'none';
+  upgrade-insecure-requests;
+">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+
 <title>KUKU RADIO</title>
 <meta name="description" content="KUKU RADIO — a private radio station, tuned just for us. Tune a frequency and let it play.">
 <meta name="theme-color" content="#170812">
+<meta name="color-scheme" content="dark">
+
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icon-192.png" type="image/png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -17,9 +37,12 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" href="data/stations.json" as="fetch" crossorigin>
+<link rel="preload" href="css/themes.css" as="style">
+<link rel="preload" href="css/base.css" as="style">
+<link rel="preload" href="js/app.js" as="script" crossorigin>
+
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
-<!-- Correct token cascade order: themes -> base -> components -> animations -->
 <link rel="stylesheet" href="css/themes.css">
 <link rel="stylesheet" href="css/base.css">
 <link rel="stylesheet" href="css/components.css">
@@ -40,16 +63,20 @@
 
 <nav class="quick-links" aria-label="Music and KUKU RADIO links">
   <a class="quick-link" href="https://music.youtube.com/" target="_blank" rel="noopener noreferrer" aria-label="Open YouTube Music">
-    <img class="quick-icon-img" src="icons/youtube-music.svg" alt="" loading="lazy" onerror="this.outerHTML='&lt;span class=&quot;quick-icon-fallback&quot;&gt;&#9654;&lt;/span&gt;'"><span class="label">YouTube Music</span>
+    <img class="quick-icon-img" src="icons/youtube-music.svg" alt="" loading="lazy" data-fallback="▶">
+    <span class="label">YouTube Music</span>
   </a>
   <a class="quick-link" href="https://open.spotify.com/" target="_blank" rel="noopener noreferrer" aria-label="Open Spotify">
-    <img class="quick-icon-img" src="icons/spotify.svg" alt="" loading="lazy" onerror="this.outerHTML='&lt;span class=&quot;quick-icon-fallback&quot;&gt;&#9679;&lt;/span&gt;'"><span class="label">Spotify</span>
+    <img class="quick-icon-img" src="icons/spotify.svg" alt="" loading="lazy" data-fallback="●">
+    <span class="label">Spotify</span>
   </a>
   <a class="quick-link" href="https://www.jiosaavn.com/" target="_blank" rel="noopener noreferrer" aria-label="Open JioSaavn">
-    <img class="quick-icon-img" src="icons/jiosaavn.svg" alt="" loading="lazy" onerror="this.outerHTML='&lt;span class=&quot;quick-icon-fallback&quot;&gt;&#9834;&lt;/span&gt;'"><span class="label">JioSaavn</span>
+    <img class="quick-icon-img" src="icons/jiosaavn.svg" alt="" loading="lazy" data-fallback="♪">
+    <span class="label">JioSaavn</span>
   </a>
   <a class="quick-link" id="song-request-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="Request a new song on WhatsApp">
-    <img class="quick-icon-img" src="icons/whatsapp.svg" alt="" loading="lazy" onerror="this.outerHTML='&lt;span class=&quot;quick-icon-fallback&quot;&gt;&#9742;&lt;/span&gt;'"><span class="label">Request Song</span>
+    <img class="quick-icon-img" src="icons/whatsapp.svg" alt="" loading="lazy" data-fallback="✆">
+    <span class="label">Request Song</span>
   </a>
   <button class="quick-link install-button" id="install-app-button" type="button" aria-label="Install KUKU RADIO" hidden>
     <span class="quick-icon-fallback" aria-hidden="true">＋</span><span class="label">Install App</span>
@@ -77,11 +104,16 @@
           <stop id="veil-stop-1" offset="0%" stop-color="#170812" stop-opacity="0.9"/>
           <stop id="veil-stop-2" offset="100%" stop-color="#170812" stop-opacity="0"/>
         </radialGradient>
+        <radialGradient id="needleGlowGradient" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#ff3f6c" stop-opacity="0.5"/>
+          <stop offset="100%" stop-color="#ff3f6c" stop-opacity="0"/>
+        </radialGradient>
       </defs>
       <path class="dial-arc" d="M 55.1 171.2 A 150 150 0 0 1 344.9 171.2"></path>
       <g id="ticks-group"></g>
       <rect class="dial-veil" x="0" y="0" width="400" height="225"></rect>
       <g id="needle-group">
+        <circle class="needle-glow" cx="200" cy="100" r="55" fill="url(#needleGlowGradient)"/>
         <line class="needle" x1="200" y1="210" x2="200" y2="72"></line>
         <circle class="needle-hub" cx="200" cy="210" r="6"></circle>
       </g>
@@ -97,7 +129,6 @@
         <div class="track-title empty" id="np-title" aria-live="polite">Tuning in…</div>
         <div class="track-subtitle" id="np-subtitle" hidden></div>
       </div>
-      <!-- 5-bar spectrum equalizer matching animations.css -->
       <div class="eq-bars" id="eq-bars" aria-hidden="true">
         <span></span><span></span><span></span><span></span><span></span>
       </div>
@@ -105,7 +136,8 @@
 
     <div class="progress-row">
       <span class="time current" id="time-current">0:00</span>
-      <div id="progress-bar" role="slider" tabindex="0" aria-label="Seek progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+      <div id="progress-bar" role="slider" tabindex="0" aria-label="Seek progress"
+           aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="0:00 of 0:00">
         <div id="progress-fill"></div>
       </div>
       <span class="time" id="time-duration">0:00</span>
@@ -126,17 +158,41 @@
     <div class="volume-row">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" class="volume-icon" aria-hidden="true"><path d="M3 10v4h4l5 5V5L7 10H3zm13.5 2c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
       <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="0.8" aria-label="Volume">
+      <button id="btn-sleep" class="sleep-btn" type="button"
+              aria-label="Sleep timer" title="Sleep timer: Off" aria-pressed="false">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 2a10 10 0 1 0 10 10 10.011 10.011 0 0 0-10-10zm0 18a8 8 0 1 1 8-8 8.009 8.009 0 0 1-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+        </svg>
+        <span id="btn-sleep-label" class="sleep-label">Off</span>
+      </button>
     </div>
   </section>
 
   <section class="tracklist-section" aria-label="Station tracklist">
-    <div class="tracklist-heading">On this frequency</div>
+    <div class="tracklist-heading" id="tracklist-heading">On this frequency</div>
     <ol id="tracklist"></ol>
   </section>
 
   <footer>&#8258; private frequency &#8258; &nbsp;·&nbsp; installable web app</footer>
 
 </main>
+
+<!-- Keyboard help dialog -->
+<dialog id="shortcuts-help" class="help-dialog" aria-label="Keyboard shortcuts">
+  <div class="help-content">
+    <h2>Keyboard shortcuts</h2>
+    <dl>
+      <dt><kbd>Space</kbd></dt><dd>Play / pause</dd>
+      <dt><kbd>M</kbd></dt><dd>Mute / unmute</dd>
+      <dt><kbd>N</kbd></dt><dd>Next track</dd>
+      <dt><kbd>P</kbd></dt><dd>Previous track</dd>
+      <dt><kbd>1</kbd>–<kbd>9</kbd></dt><dd>Jump to station</dd>
+      <dt><kbd>?</kbd></dt><dd>Show this help</dd>
+      <dt><kbd>Esc</kbd></dt><dd>Close dialog</dd>
+    </dl>
+    <button type="button" class="help-close" id="shortcuts-close">Close</button>
+  </div>
+</dialog>
 
 <audio id="audio-player" preload="metadata"></audio>
 
