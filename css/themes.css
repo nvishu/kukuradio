@@ -1,157 +1,261 @@
 /* =========================================================================
-   KUKU RADIO — theme tokens
+   KUKU RADIO — design tokens (css/themes.css)
    -------------------------------------------------------------------------
-   Every color in the app is one of these custom properties. JS sets
-   body[data-theme] when the station changes; :root is the default shown
-   for the first paint, before JS runs (Late Night 90s / rose).
+   Single source of truth for color, type, spacing, radius, motion and
+   z-index. Nothing in this file selects a component; it only declares
+   custom properties.
+   ========================================================================= */
 
-   To add a new station theme: copy one block, give it a new data-theme
-   name, pick new values, then reference that same name as the "theme"
-   field for the station in data/stations.json.
+/* =========================================================================
+   1. GLOBAL TOKENS — identical for every theme
    ========================================================================= */
 
 :root {
-  --bg-deep: #170812;
-  --bg-deep-rgb: 23, 8, 18;
-  --bg-violet: #3d0f30;
-  --bg-violet-2: #5c1442;
-  --glow-amber: #ff3f6c;
-  --glow-amber-rgb: 255, 63, 108;
-  --glow-amber-dim: rgba(255, 63, 108, 0.35);
-  --blush-rose: #ff8a3d;
-  --blush-rose-rgb: 255, 138, 61;
-  --soft-lavender: #ffcf5c;
-  --cream: #fff6f0;
-  --cream-rgb: 255, 246, 240;
-  --cream-dim: rgba(255, 246, 240, 0.66);
-  --cream-faint: rgba(255, 246, 240, 0.36);
-  --glass-bg: rgba(255, 246, 240, 0.06);
-  --glass-border: rgba(255, 158, 180, 0.18);
-  --shadow-deep: rgba(20, 3, 12, 0.55);
+  color-scheme: dark;
+
+  /* ---------- Type ---------------------------------------------------- */
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-ui: 'Plus Jakarta Sans', 'Noto Sans Devanagari', 'Noto Sans Gurmukhi',
+             system-ui, -apple-system, sans-serif;
+  --font-mono: 'Space Mono', ui-monospace, 'SFMono-Regular', monospace;
+
+  --fs-wordmark: clamp(2.05rem, 8.5vw, 3.6rem);
+  --fs-title:    clamp(1.15rem, 3.4vw, 1.32rem);
+  --fs-body:     0.9rem;
+  --fs-sm:       0.83rem;
+  --fs-xs:       0.74rem;
+  --fs-mono:     0.7rem;
+
+  --tracking-display: -0.02em;
+  --tracking-mono:    0.14em;
+  --tracking-caps:    0.22em;
+
+  /* ---------- Space (4px base) ---------------------------------------- */
+  --s-1: 0.25rem;
+  --s-2: 0.5rem;
+  --s-3: 0.75rem;
+  --s-4: 1rem;
+  --s-5: 1.25rem;
+  --s-6: 1.5rem;
+  --s-8: 2rem;
+  --s-10: 2.5rem;
+  --s-12: 3rem;
+
+  /* ---------- Radius -------------------------------------------------- */
+  --r-xs: 8px;
+  --r-sm: 12px;
+  --r-md: 14px;
+  --r-lg: 16px;
+  --r-xl: 20px;
+  --r-pill: 999px;
+
+  /* ---------- Motion -------------------------------------------------- */
+  --t-press:  0.15s;
+  --t-hover:  0.25s;
+  --t-enter:  0.4s;
+  --t-theme:  0.9s;
+  --t-bg-in:  2.6s;
+  --t-bg-pan: 10s;
+
+  --ease-std:   ease;
+  --ease-out:   cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-bg:    cubic-bezier(0.45, 0, 0.2, 1);
+  --ease-drift: cubic-bezier(0.25, 0.1, 0.25, 1);
+
+  /* ---------- Z-index ------------------------------------------------- */
+  --z-backdrop:  0;
+  --z-sky:       2;
+  --z-main:      3;
+  --z-tracklist: 4;
+  --z-card:      5;
+  --z-rail:      50;
+  --z-hint:      51;
+
+  /* ---------- Metrics ------------------------------------------------- */
+  --content-max: 720px;
+  --dial-max: 420px;
+  --rail-w: 190px;
+  --tap-min: 44px;
+  --focus-width: 2px;
 }
 
-/* Station — "Late Night 90s" — rose-red / coral-orange / gold */
+
+/* =========================================================================
+   2. THEME SEEDS — 7 colors each
+   ========================================================================= */
+
+/* Late Night 90s — rose-red / coral-orange / gold */
+body,
 body[data-theme="rose"] {
   --bg-deep: #170812;
   --bg-deep-rgb: 23, 8, 18;
-  --bg-violet: #3d0f30;
-  --bg-violet-2: #5c1442;
-  --glow-amber: #ff3f6c;
-  --glow-amber-rgb: 255, 63, 108;
-  --glow-amber-dim: rgba(255, 63, 108, 0.35);
-  --blush-rose: #ff8a3d;
-  --blush-rose-rgb: 255, 138, 61;
-  --soft-lavender: #ffcf5c;
+  --bg-mid: #3d0f30;
+  --bg-high: #5c1442;
+
+  --accent: #ff3f6c;
+  --accent-rgb: 255, 63, 108;
+  --accent-2: #ff8a3d;
+  --accent-2-rgb: 255, 138, 61;
+  --accent-3: #ffcf5c;
+
   --cream: #fff6f0;
   --cream-rgb: 255, 246, 240;
-  --cream-dim: rgba(255, 246, 240, 0.66);
-  --cream-faint: rgba(255, 246, 240, 0.36);
-  --glass-bg: rgba(255, 246, 240, 0.06);
-  --glass-border: rgba(255, 158, 180, 0.18);
-  --shadow-deep: rgba(20, 3, 12, 0.55);
 }
 
-/* Station — "Missing You" — amber / dark-violet */
+/* Missing You — ice blue / cyan */
 body[data-theme="original"] {
   --bg-deep: #0a141f;
   --bg-deep-rgb: 10, 20, 31;
-  --bg-violet: #13293d;
-  --bg-violet-2: #1e415c;
-  --glow-amber: #4fc3f7;
-  --glow-amber-rgb: 79, 195, 247;
-  --glow-amber-dim: rgba(79, 195, 247, 0.35);
-  --blush-rose: #cfeaf7;
-  --blush-rose-rgb: 207, 234, 247;
-  --soft-lavender: #9fb9c9;
+  --bg-mid: #13293d;
+  --bg-high: #1e415c;
+
+  --accent: #4fc3f7;
+  --accent-rgb: 79, 195, 247;
+  --accent-2: #cfeaf7;
+  --accent-2-rgb: 207, 234, 247;
+  --accent-3: #9fb9c9;
+
   --cream: #f4f9fb;
   --cream-rgb: 244, 249, 251;
-  --cream-dim: rgba(244, 249, 251, 0.66);
-  --cream-faint: rgba(244, 249, 251, 0.36);
-  --glass-bg: rgba(244, 249, 251, 0.06);
-  --glass-border: rgba(180, 210, 225, 0.18);
-  --shadow-deep: rgba(3, 8, 14, 0.55);
 }
 
-/* Station — "Bhojpuri Melody" — magenta / lime */
+/* Bhojpuri Melody — magenta / lime */
 body[data-theme="sky"] {
   --bg-deep: #160b24;
   --bg-deep-rgb: 22, 11, 36;
-  --bg-violet: #3a124f;
-  --bg-violet-2: #671b70;
-  --glow-amber: #ff4fd8;
-  --glow-amber-rgb: 255, 79, 216;
-  --glow-amber-dim: rgba(255, 79, 216, 0.38);
-  --blush-rose: #8cff4f;
-  --blush-rose-rgb: 140, 255, 79;
-  --soft-lavender: #e2b7ff;
+  --bg-mid: #3a124f;
+  --bg-high: #671b70;
+
+  --accent: #ff4fd8;
+  --accent-rgb: 255, 79, 216;
+  --accent-2: #8cff4f;
+  --accent-2-rgb: 140, 255, 79;
+  --accent-3: #e2b7ff;
+
   --cream: #fff5ff;
   --cream-rgb: 255, 245, 255;
-  --cream-dim: rgba(255, 245, 255, 0.68);
-  --cream-faint: rgba(255, 245, 255, 0.38);
-  --glass-bg: rgba(255, 245, 255, 0.075);
-  --glass-border: rgba(255, 79, 216, 0.24);
-  --shadow-deep: rgba(13, 3, 20, 0.58);
 }
 
-/* Station — "Punjabi Funk" — electric purple / magenta / lime */
+/* Punjabi Funk — amber / dusty pink / lavender */
 body[data-theme="funky"] {
   --bg-deep: #0f0e1a;
   --bg-deep-rgb: 15, 14, 26;
-  --bg-violet: #241f42;
-  --bg-violet-2: #2e2555;
-  --glow-amber: #f2b166;
-  --glow-amber-rgb: 242, 177, 102;
-  --glow-amber-dim: rgba(242, 177, 102, 0.35);
-  --blush-rose: #e8879a;
-  --blush-rose-rgb: 232, 135, 154;
-  --soft-lavender: #c9b6e4;
+  --bg-mid: #241f42;
+  --bg-high: #2e2555;
+
+  --accent: #f2b166;
+  --accent-rgb: 242, 177, 102;
+  --accent-2: #e8879a;
+  --accent-2-rgb: 232, 135, 154;
+  --accent-3: #c9b6e4;
+
   --cream: #f7ede0;
   --cream-rgb: 247, 237, 224;
-  --cream-dim: rgba(247, 237, 224, 0.62);
-  --cream-faint: rgba(247, 237, 224, 0.34);
-  --glass-bg: rgba(247, 237, 224, 0.055);
-  --glass-border: rgba(247, 237, 224, 0.13);
-  --shadow-deep: rgba(5, 4, 12, 0.55);
 }
 
-/* Station — "Party Vibes" — electric teal / coral / gold */
+/* Party Vibes — electric teal / coral / gold */
 body[data-theme="party"] {
   --bg-deep: #051a1c;
   --bg-deep-rgb: 5, 26, 28;
-  --bg-violet: #0d3438;
-  --bg-violet-2: #124a4f;
-  --glow-amber: #2dd4bf;
-  --glow-amber-rgb: 45, 212, 191;
-  --glow-amber-dim: rgba(45, 212, 191, 0.36);
-  --blush-rose: #ff6b6b;
-  --blush-rose-rgb: 255, 107, 107;
-  --soft-lavender: #ffc857;
+  --bg-mid: #0d3438;
+  --bg-high: #124a4f;
+
+  --accent: #2dd4bf;
+  --accent-rgb: 45, 212, 191;
+  --accent-2: #ff6b6b;
+  --accent-2-rgb: 255, 107, 107;
+  --accent-3: #ffc857;
+
   --cream: #f0fffd;
   --cream-rgb: 240, 255, 253;
-  --cream-dim: rgba(240, 255, 253, 0.68);
-  --cream-faint: rgba(240, 255, 253, 0.38);
-  --glass-bg: rgba(240, 255, 253, 0.075);
-  --glass-border: rgba(120, 230, 220, 0.22);
-  --shadow-deep: rgba(2, 12, 13, 0.58);
 }
 
-/* Station — "Universal Destiny" — brown / gray / white */
+/* Universal Destiny — tan / warm grey */
 body[data-theme="brown"] {
   --bg-deep: #150f0c;
   --bg-deep-rgb: 21, 15, 12;
-  --bg-violet: #2c1f17;
-  --bg-violet-2: #40291b;
-  --glow-amber: #cf9a5c;
-  --glow-amber-rgb: 207, 154, 92;
-  --glow-amber-dim: rgba(207, 154, 92, 0.35);
-  --blush-rose: #b7a68f;
-  --blush-rose-rgb: 183, 166, 143;
-  --soft-lavender: #9c8f80;
+  --bg-mid: #2c1f17;
+  --bg-high: #40291b;
+
+  --accent: #cf9a5c;
+  --accent-rgb: 207, 154, 92;
+  --accent-2: #b7a68f;
+  --accent-2-rgb: 183, 166, 143;
+  --accent-3: #9c8f80;
+
   --cream: #f4efe7;
   --cream-rgb: 244, 239, 231;
-  --cream-dim: rgba(244, 239, 231, 0.66);
-  --cream-faint: rgba(244, 239, 231, 0.36);
-  --glass-bg: rgba(244, 239, 231, 0.06);
-  --glass-border: rgba(205, 188, 168, 0.18);
-  --shadow-deep: rgba(10, 6, 4, 0.55);
+}
+
+
+/* =========================================================================
+   3. DERIVED TOKENS — computed from seeds
+   ========================================================================= */
+
+body {
+  /* Text */
+  --text:       var(--cream);
+  --text-dim:   color-mix(in srgb, var(--cream) 78%, transparent);
+  --text-faint: color-mix(in srgb, var(--cream) 58%, transparent);
+  --on-accent:  var(--bg-deep);
+
+  /* Accent tints */
+  --accent-soft:  color-mix(in srgb, var(--accent) 36%, transparent);
+  --accent-faint: color-mix(in srgb, var(--accent) 18%, transparent);
+
+  /* Glass surfaces */
+  --surface:           color-mix(in srgb, var(--cream) 7%, transparent);
+  --surface-solid:     color-mix(in oklab, var(--bg-deep) 92%, black);
+  --surface-border:    color-mix(in srgb, var(--accent) 22%, transparent);
+  --surface-highlight: color-mix(in srgb, var(--cream) 11%, transparent);
+
+  /* Elevation */
+  --shadow-tint: color-mix(in oklab, var(--bg-deep) 62%, black);
+  --shadow-key:  color-mix(in srgb, var(--shadow-tint) 55%, transparent);
+  --shadow-card: 0 15px 45px var(--shadow-key);
+  --shadow-rail: 0 10px 30px color-mix(in srgb, var(--shadow-tint) 40%, transparent);
+  --shadow-glow: 0 8px 26px var(--accent-soft);
+
+  /* Focus */
+  --focus-ring: var(--focus-width) solid var(--accent);
+}
+
+@supports not (color: color-mix(in srgb, red, blue)) {
+  body {
+    --text-dim: rgba(var(--cream-rgb), 0.78);
+    --text-faint: rgba(var(--cream-rgb), 0.58);
+    --accent-soft: rgba(var(--accent-rgb), 0.36);
+    --accent-faint: rgba(var(--accent-rgb), 0.18);
+    --surface: rgba(var(--cream-rgb), 0.07);
+    --surface-solid: rgba(var(--bg-deep-rgb), 0.96);
+    --surface-border: rgba(var(--accent-rgb), 0.22);
+    --surface-highlight: rgba(var(--cream-rgb), 0.11);
+    --shadow-key: rgba(var(--bg-deep-rgb), 0.62);
+  }
+}
+
+
+/* =========================================================================
+   4. PREFERENCE OVERRIDES
+   ========================================================================= */
+
+@media (prefers-contrast: more) {
+  body {
+    --text-dim: var(--cream);
+    --text-faint: color-mix(in srgb, var(--cream) 82%, transparent);
+    --surface: color-mix(in srgb, var(--cream) 14%, transparent);
+    --surface-border: color-mix(in srgb, var(--accent) 55%, transparent);
+    --focus-width: 3px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --t-press: 0.01ms;
+    --t-hover: 0.01ms;
+    --t-enter: 0.01ms;
+    --t-theme: 0.01ms;
+    --t-bg-in: 0.01ms;
+    --t-bg-pan: 0.01ms;
+  }
 }
