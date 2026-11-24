@@ -1,8 +1,5 @@
 /* =========================================================================
-   KUKU RADIO — js/app.js
-   -------------------------------------------------------------------------
-   Entry point. Loads data/stations.json, wires all modules together,
-   and runs the opening needle sweep to the user's last-visited station.
+   KUKU RADIO — entry point
    ========================================================================= */
 
 import { buildDial, buildFrequencyButtons, jumpNeedle } from './dial.js';
@@ -10,21 +7,25 @@ import { buildSky, prefersReducedMotion } from './background.js';
 import { initPlayer } from './player.js';
 import { initLiveCount } from './live-count.js';
 import { initInstallPrompt, initServiceWorker, initSongRequestLink } from './pwa.js';
+import { loadStations } from './stations.js';
+import { $, $$, onIdle } from './utils.js';
 
-const dialConsole = document.getElementById('dial-console');
+const dialConsole = $('#dial-console');
 
-async function loadStations() {
-  const res = await fetch('data/stations.json');
-  if (!res.ok) throw new Error(`stations.json responded ${res.status}`);
-  const data = await res.json();
-  if (!Array.isArray(data) || data.length === 0) {
-    throw new Error('stations.json is empty or malformed');
-  }
-  return data;
+function setupIconFallbacks() {
+  $$('.quick-icon-img').forEach((img) => {
+    img.addEventListener('error', () => {
+      const span = document.createElement('span');
+      span.className = 'quick-icon-fallback';
+      span.textContent = img.dataset.fallback || '●';
+      img.replaceWith(span);
+    }, { once: true });
+  });
 }
 
 async function tuneIn() {
   buildSky();
+  setupIconFallbacks();
   initSongRequestLink();
   initInstallPrompt();
   initServiceWorker();
@@ -34,7 +35,7 @@ async function tuneIn() {
     stations = await loadStations();
   } catch (err) {
     console.error('[KUKU RADIO] Could not load station data:', err);
-    const title = document.getElementById('np-title');
+    const title = $('#np-title');
     if (title) {
       title.textContent = "Couldn't load the stations — refresh to try again";
       title.classList.add('empty');
@@ -63,6 +64,17 @@ async function tuneIn() {
   } else {
     player.goToStation(startIdx, false);
   }
+
+  // Non-critical work after first paint
+  onIdle(() => {
+    // Warm SW cache for next station images (best-effort)
+    const next = stations[(startIdx + 1) % stations.length];
+    if (next?.backgroundImages?.[0]) {
+      const img = new Image();
+      img.decoding = 'async';
+      img.src = next.backgroundImages[0];
+    }
+  });
 }
 
 tuneIn();
