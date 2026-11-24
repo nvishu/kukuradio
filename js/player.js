@@ -1,29 +1,12 @@
 /* =========================================================================
    KUKU RADIO — js/player.js
    -------------------------------------------------------------------------
-   Two things changed on purpose from the original sequential player:
-
-   1. Each station keeps a shuffled "bag" of its own track indices
-      (Fisher–Yates). Switching stations rebuilds the bag and immediately
-      pops the first entry as the opening track — so the opening track is
-      never index 0, and it's different every time. When a track ends
-      (or Next is pressed) the next index is popped from the bag instead
-      of incrementing — unpredictable by design. When the bag empties it
-      reshuffles, guaranteed not to hand back the track that just played.
-      Picking a song directly from the list below does the same bag
-      bookkeeping (removes it from the upcoming bag first) so the auto
-      shuffle stays fair afterward instead of replaying it again too soon.
-
-   2. "Previous" does NOT step backward through the underlying list —
-      there is no such thing as "backward" in a shuffle. Instead it steps
-      back through what was actually just heard this session (a small
-      in-memory history), the way shuffle mode works in Spotify/Apple
-      Music. Forward always pulls something new from the bag; backward
-      only ever replays your own recent history.
-
-   The station's full track list renders below Now Playing — that
-   rendering and its click-to-play wiring both live in this file since
-   picking a track from the list is a playback action.
+   Optimized shuffle-bag radio player with:
+   - Lock-screen / headphone controls via navigator.mediaSession
+   - Pointer drag scrubbing on the progress bar
+   - Differential tracklist updates (no full DOM rebuild on song change)
+   - Next-track audio preloading & automatic error recovery
+   - Saved volume & station state in localStorage
    ========================================================================= */
 
 import { updateNeedle, updateDialLabels, updateFrequencyActive } from './dial.js';
@@ -31,6 +14,9 @@ import { startStationBackground } from './background.js';
 
 const ICON_PLAY = '<path d="M8 5v14l11-7z"/>';
 const ICON_PAUSE = '<path d="M6 5h4v14H6zm8 0h4v14h-4z"/>';
+const STORAGE_VOL_KEY = 'kuku-volume';
+const STORAGE_STATION_KEY = 'kuku-station';
+const MAX_HISTORY = 50;
 
 const audio = document.getElementById('audio-player');
 const npFreqLabel = document.getElementById('np-freq-label');
@@ -49,8 +35,11 @@ const volumeSlider = document.getElementById('volume-slider');
 const tracklistEl = document.getElementById('tracklist');
 const tracklistHeading = document.querySelector('.tracklist-heading');
 
+const preloadAudio = new Audio();
+preloadAudio.preload = 'metadata';
+
 function formatTime(sec) {
-  if (!isFinite(sec) || isNaN(sec)) return '0:00';
+  if (!isFinite(sec) || isNaN(sec) || sec < 0) return '0:00';
   const m = Math.floor(sec / 60);
   const s = Math.floor(sec % 60);
   return `${m}:${s.toString().padStart(2, '0')}`;
@@ -70,34 +59,44 @@ function shuffledIndices(length, avoidFirst) {
 }
 
 export function initPlayer(stations) {
+  // Restore persisted volume
+  const savedVol = localStorage.getItem(STORAGE_VOL_KEY);
+  if (savedVol !== null && !isNaN(parseFloat(savedVol))) {
+    volumeSlider.value = savedVol;
+  }
   audio.volume = parseFloat(volumeSlider.value);
 
   let currentStation = 0;
   let currentTrack = null;
+  let renderedStationIdx = -1;
+  let trackButtons = [];
   let bag = [];
   let history = [];
   let historyPos = -1;
   let isPlaying = false;
+  let isScrubbing = false;
+  let consecutiveErrors = 0;
+  let errorSkipTimer = null;
 
   function refillBag(avoidFirst) {
     const len = stations[currentStation].tracks.length;
     bag = shuffledIndices(len, avoidFirst);
   }
 
-  // Pull the next track forward: replays forward through session history
-  // first if the listener had stepped back, otherwise pops a fresh
-  // unpredictable pick from the shuffle bag (reshuffling if it's empty).
   function advance() {
     const len = stations[currentStation].tracks.length;
     if (len === 0) return null;
+
     if (historyPos > -1 && historyPos < history.length - 1) {
       historyPos++;
       currentTrack = history[historyPos];
       return currentTrack;
     }
+
     if (bag.length === 0) refillBag(currentTrack);
     currentTrack = bag.shift();
     history.push(currentTrack);
+    if (history.length > MAX_HISTORY) history.shift();
     historyPos = history.length - 1;
     return currentTrack;
   }
@@ -106,45 +105,92 @@ export function initPlayer(stations) {
     if (historyPos > 0) {
       historyPos--;
       currentTrack = history[historyPos];
+    } else if (audio.currentTime > 3) {
+      audio.currentTime = 0;
     }
     return currentTrack;
   }
 
   function setTitle(text, { empty = false } = {}) {
+    if (npTitle.textContent === text && npTitle.classList.contains('empty') === empty) return;
     npTitle.textContent = text;
     npTitle.classList.toggle('empty', empty);
     npTitle.classList.remove('changed');
-    void npTitle.offsetWidth; // restart the reveal animation on every change
+    void npTitle.offsetWidth;
     npTitle.classList.add('changed');
   }
 
+  function syncMediaSession(station, track) {
+    if (!('mediaSession' in navigator)) return;
+    if (!track) {
+      navigator.mediaSession.metadata = null;
+      return;
+    }
+    const artworkUrl = station.backgroundImages?.[0] || '';
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: track.title,
+      artist: `${station.freq} · ${station.name}`,
+      album: 'KUKU RADIO',
+      artwork: artworkUrl ? [{ src: artworkUrl, sizes: '512x512', type: 'image/jpeg' }] : []
+    });
+  }
+
+  function preloadNextInBag() {
+    const station = stations[currentStation];
+    if (!station || !station.tracks.length || !bag.length) return;
+    const nextIdx = bag[0];
+    const nextTrackObj = station.tracks[nextIdx];
+    if (nextTrackObj?.file) {
+      preloadAudio.src = encodeURI(nextTrackObj.file);
+    }
+  }
+
   function loadCurrentTrack() {
+    clearTimeout(errorSkipTimer);
     const station = stations[currentStation];
     npFreqLabel.textContent = `${station.freq} · ${station.name}`;
 
     if (station.tracks.length === 0 || currentTrack === null) {
       audio.removeAttribute('src');
+      audio.load();
       setTitle("This frequency's still quiet", { empty: true });
       npSubtitle.textContent = 'New songs are on the way';
       npSubtitle.hidden = false;
       setControlsEnabled(false);
       updateProgressUI(0, 0);
-      renderTracklist();
+      syncMediaSession(station, null);
+      renderOrUpdateTracklist(true);
       return;
     }
 
     const track = station.tracks[currentTrack];
-    // encodeURI preserves the folder structure while safely handling spaces
-    // and other common characters in uploaded MP3 filenames.
     audio.src = encodeURI(track.file);
     setTitle(track.title, { empty: false });
     npSubtitle.hidden = true;
     setControlsEnabled(true);
-    renderTracklist();
+    updateProgressUI(0, 0);
+    syncMediaSession(station, track);
+    renderOrUpdateTracklist(false);
+    preloadNextInBag();
   }
 
-  function renderTracklist() {
+  // Only rebuilds DOM nodes when switching stations; otherwise just updates active class
+  function renderOrUpdateTracklist(forceRebuild = false) {
     const station = stations[currentStation];
+
+    if (!forceRebuild && renderedStationIdx === currentStation && trackButtons.length === station.tracks.length) {
+      trackButtons.forEach((btn, i) => {
+        const isActive = i === currentTrack;
+        btn.classList.toggle('active', isActive);
+        if (isActive) {
+          btn.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        }
+      });
+      return;
+    }
+
+    renderedStationIdx = currentStation;
+    trackButtons = [];
     tracklistEl.replaceChildren();
 
     if (tracklistHeading) {
@@ -170,6 +216,7 @@ export function initPlayer(stations) {
 
       btn.type = 'button';
       btn.className = i === currentTrack ? 'active' : '';
+      btn.dataset.trackIdx = String(i);
       btn.setAttribute('aria-label', `Play ${track.title}`);
 
       index.className = 'track-index';
@@ -177,26 +224,31 @@ export function initPlayer(stations) {
       title.textContent = track.title;
 
       btn.append(index, title);
-      btn.addEventListener('click', () => selectTrack(i));
       li.appendChild(btn);
+      trackButtons.push(btn);
       fragment.appendChild(li);
     });
+
     tracklistEl.appendChild(fragment);
   }
 
-  // Picking a track directly from the list: plays it immediately, and if
-  // it was still waiting in the upcoming shuffle bag, pulls it out first
-  // so the automatic shuffle doesn't hand you the same song again right
-  // after you chose it yourself.
+  // Event delegation on tracklist (1 listener instead of N listeners)
+  tracklistEl.addEventListener('click', (e) => {
+    const btn = e.target.closest('button[data-track-idx]');
+    if (!btn) return;
+    selectTrack(Number(btn.dataset.trackIdx));
+  });
+
   function selectTrack(index) {
     if (index === currentTrack) {
-      playAudio();
+      togglePlay();
       return;
     }
     const bagPos = bag.indexOf(index);
     if (bagPos !== -1) bag.splice(bagPos, 1);
     currentTrack = index;
     history.push(index);
+    if (history.length > MAX_HISTORY) history.shift();
     historyPos = history.length - 1;
     loadCurrentTrack();
     playAudio();
@@ -210,17 +262,28 @@ export function initPlayer(stations) {
   }
 
   function applyStationTheme(index) {
-    const theme = stations[index] && stations[index].theme ? stations[index].theme : 'rose';
+    const theme = stations[index]?.theme || 'rose';
     document.body.setAttribute('data-theme', theme);
   }
 
   function goToStation(index, autoplay) {
+    if (index < 0 || index >= stations.length) index = 0;
+    clearTimeout(errorSkipTimer);
+    consecutiveErrors = 0;
+
     pauseAudio();
     applyStationTheme(index);
     currentStation = index;
+    localStorage.setItem(STORAGE_STATION_KEY, String(index));
+
+    document.dispatchEvent(new CustomEvent('kuku:station-change', {
+      detail: { stationId: stations[index].freq ?? String(index), index }
+    }));
+
     history = [];
     historyPos = -1;
     bag = [];
+    renderedStationIdx = -1; // Force tracklist rebuild for the new station
 
     updateNeedle(index, stations.length);
     updateDialLabels(index);
@@ -230,7 +293,7 @@ export function initPlayer(stations) {
     currentTrack = null;
     if (len > 0) {
       refillBag();
-      advance(); // pops a random opening track — never track 0
+      advance();
     }
 
     loadCurrentTrack();
@@ -255,9 +318,19 @@ export function initPlayer(stations) {
 
   function playAudio() {
     if (stations[currentStation].tracks.length === 0) return;
-    audio.play().catch(() => {});
-    isPlaying = true;
-    updatePlayUI();
+    const playPromise = audio.play();
+    if (playPromise !== undefined) {
+      playPromise
+        .then(() => {
+          consecutiveErrors = 0;
+          isPlaying = true;
+          updatePlayUI();
+        })
+        .catch(() => {
+          isPlaying = false;
+          updatePlayUI();
+        });
+    }
   }
 
   function pauseAudio() {
@@ -274,53 +347,132 @@ export function initPlayer(stations) {
     playIcon.innerHTML = isPlaying ? ICON_PAUSE : ICON_PLAY;
     btnPlay.setAttribute('aria-label', isPlaying ? 'Pause' : 'Play');
     eqBars.classList.toggle('playing', isPlaying);
+    if ('mediaSession' in navigator) {
+      navigator.mediaSession.playbackState = isPlaying ? 'playing' : 'paused';
+    }
   }
 
   function updateProgressUI(current, duration) {
-    const pct = duration ? (current / duration) * 100 : 0;
-    progressFill.style.width = pct + '%';
-    progressBar.style.setProperty('--knob-pos', pct + '%');
-    progressBar.setAttribute('aria-valuenow', Math.round(pct));
+    const pct = duration ? Math.min(Math.max((current / duration) * 100, 0), 100) : 0;
+    progressFill.style.width = `${pct}%`;
+    progressBar.style.setProperty('--knob-pos', `${pct}%`);
+    progressBar.setAttribute('aria-valuenow', String(Math.round(pct)));
     timeCurrent.textContent = formatTime(current);
     timeDuration.textContent = formatTime(duration);
   }
 
-  audio.addEventListener('timeupdate', () => updateProgressUI(audio.currentTime, audio.duration));
+  // --- Audio Element Listeners ---
+  audio.addEventListener('timeupdate', () => {
+    if (!isScrubbing) updateProgressUI(audio.currentTime, audio.duration);
+  });
   audio.addEventListener('loadedmetadata', () => updateProgressUI(audio.currentTime, audio.duration));
   audio.addEventListener('ended', nextTrack);
+  audio.addEventListener('play', () => { isPlaying = true; updatePlayUI(); });
+  audio.addEventListener('pause', () => { isPlaying = false; updatePlayUI(); });
 
   audio.addEventListener('error', () => {
     const station = stations[currentStation];
     const track = currentTrack !== null ? station.tracks[currentTrack] : null;
     if (!track) return;
+
     console.warn('[KUKU RADIO] Audio could not be loaded:', track.file);
-    npSubtitle.textContent = "Couldn't load that one — skipping ahead";
-    npSubtitle.hidden = false;
+    consecutiveErrors++;
     isPlaying = false;
     updatePlayUI();
-    // Skip the broken file automatically instead of stalling the station.
-    if (station.tracks.length > 1) setTimeout(nextTrack, 1100);
+
+    // Circuit breaker: don't loop infinitely if every file on the station is offline
+    if (consecutiveErrors >= station.tracks.length) {
+      npSubtitle.textContent = 'Unable to load tracks right now — check your connection';
+      npSubtitle.hidden = false;
+      return;
+    }
+
+    npSubtitle.textContent = "Couldn't load that one — skipping ahead";
+    npSubtitle.hidden = false;
+    if (station.tracks.length > 1) {
+      clearTimeout(errorSkipTimer);
+      errorSkipTimer = setTimeout(nextTrack, 1100);
+    }
   });
 
-  progressBar.addEventListener('click', (e) => {
+  // --- Smooth Pointer Drag Scrubbing on Progress Bar ---
+  function seekFromPointer(clientX) {
     if (!audio.duration) return;
     const rect = progressBar.getBoundingClientRect();
-    const pct = Math.min(Math.max((e.clientX - rect.left) / rect.width, 0), 1);
-    audio.currentTime = pct * audio.duration;
+    const pct = Math.min(Math.max((clientX - rect.left) / rect.width, 0), 1);
+    updateProgressUI(pct * audio.duration, audio.duration);
+    return pct * audio.duration;
+  }
+
+  progressBar.addEventListener('pointerdown', (e) => {
+    if (!audio.duration) return;
+    isScrubbing = true;
+    progressBar.setPointerCapture(e.pointerId);
+    seekFromPointer(e.clientX);
+  });
+
+  progressBar.addEventListener('pointermove', (e) => {
+    if (!isScrubbing) return;
+    seekFromPointer(e.clientX);
+  });
+
+  progressBar.addEventListener('pointerup', (e) => {
+    if (!isScrubbing) return;
+    isScrubbing = false;
+    const targetTime = seekFromPointer(e.clientX);
+    if (typeof targetTime === 'number') audio.currentTime = targetTime;
   });
 
   progressBar.addEventListener('keydown', (e) => {
     if (!audio.duration) return;
-    if (e.key === 'ArrowRight') audio.currentTime = Math.min(audio.currentTime + 5, audio.duration);
-    if (e.key === 'ArrowLeft') audio.currentTime = Math.max(audio.currentTime - 5, 0);
+    if (e.key === 'ArrowRight') {
+      e.preventDefault();
+      audio.currentTime = Math.min(audio.currentTime + 5, audio.duration);
+    } else if (e.key === 'ArrowLeft') {
+      e.preventDefault();
+      audio.currentTime = Math.max(audio.currentTime - 5, 0);
+    }
+  });
+
+  // --- Hardware / Lock-Screen MediaSession Handlers ---
+  if ('mediaSession' in navigator) {
+    navigator.mediaSession.setActionHandler('play', playAudio);
+    navigator.mediaSession.setActionHandler('pause', pauseAudio);
+    navigator.mediaSession.setActionHandler('previoustrack', prevTrack);
+    navigator.mediaSession.setActionHandler('nexttrack', nextTrack);
+    navigator.mediaSession.setActionHandler('seekto', (details) => {
+      if (details.seekTime !== undefined && audio.duration) {
+        audio.currentTime = details.seekTime;
+      }
+    });
+  }
+
+  // --- Global Keyboard Shortcuts (Space = Play/Pause, M = Mute) ---
+  document.addEventListener('keydown', (e) => {
+    const tag = document.activeElement?.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || tag === 'BUTTON') return;
+    if (e.code === 'Space') {
+      e.preventDefault();
+      togglePlay();
+    } else if (e.key === 'm' || e.key === 'M') {
+      audio.muted = !audio.muted;
+    }
   });
 
   btnPlay.addEventListener('click', togglePlay);
   btnNext.addEventListener('click', nextTrack);
   btnPrev.addEventListener('click', prevTrack);
   volumeSlider.addEventListener('input', (e) => {
-    audio.volume = parseFloat(e.target.value);
+    const val = parseFloat(e.target.value);
+    audio.volume = val;
+    audio.muted = false;
+    localStorage.setItem(STORAGE_VOL_KEY, String(val));
   });
 
-  return { goToStation };
+  const savedStation = parseInt(localStorage.getItem(STORAGE_STATION_KEY) || '0', 10);
+  const initialStation = (!isNaN(savedStation) && savedStation >= 0 && savedStation < stations.length)
+    ? savedStation
+    : 0;
+
+  return { goToStation, initialStation };
 }
