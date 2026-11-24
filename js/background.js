@@ -1,18 +1,12 @@
 /* =========================================================================
-   KUKU RADIO — js/background.js
-   -------------------------------------------------------------------------
-   Crossfading full-page station backgrounds + the ambient starfield.
-   Fully wired to components.css & animations.css hooks:
-   - Uses [hidden] for .station-bg-error
-   - Triggers .station-bg-overlay.blooming on station change
-   - Applies will-change only during active transitions to save mobile VRAM
+   KUKU RADIO — crossfading backgrounds + ambient starfield
    ========================================================================= */
 
-const stationBgA = document.getElementById('station-bg-a');
-const stationBgB = document.getElementById('station-bg-b');
+const stationBgA       = document.getElementById('station-bg-a');
+const stationBgB       = document.getElementById('station-bg-b');
 const stationBgOverlay = document.querySelector('.station-bg-overlay');
-const stationBgError = document.getElementById('station-bg-error');
-const sky = document.getElementById('sky');
+const stationBgError   = document.getElementById('station-bg-error');
+const sky              = document.getElementById('sky');
 
 const BG_INTERVAL = 10000;
 const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -29,20 +23,17 @@ motionQuery.addEventListener?.('change', (e) => {
   buildSky();
 });
 
-// Clean up GPU layer promotion once transition finishes
 [stationBgA, stationBgB].forEach((layer) => {
   if (!layer) return;
   layer.addEventListener('transitionend', (e) => {
-    if (e.propertyName === 'opacity') {
-      layer.style.willChange = 'auto';
-    }
-  });
+    if (e.propertyName === 'opacity') layer.style.willChange = 'auto';
+  }, { passive: true });
 });
 
 if (stationBgOverlay) {
   stationBgOverlay.addEventListener('animationend', () => {
     stationBgOverlay.classList.remove('blooming');
-  });
+  }, { passive: true });
 }
 
 function triggerBloom() {
@@ -58,26 +49,17 @@ export function clearStationBackground() {
   activeImages = [];
   bgIndex = 0;
   bgShowingA = true;
-  if (stationBgA) {
-    stationBgA.classList.remove('active');
-    stationBgA.style.backgroundImage = '';
-    stationBgA.style.willChange = 'auto';
-  }
-  if (stationBgB) {
-    stationBgB.classList.remove('active');
-    stationBgB.style.backgroundImage = '';
-    stationBgB.style.willChange = 'auto';
-  }
-  if (stationBgError) {
-    stationBgError.hidden = true;
-  }
+  [stationBgA, stationBgB].forEach((layer) => {
+    if (!layer) return;
+    layer.classList.remove('active');
+    layer.style.backgroundImage = '';
+    layer.style.willChange = 'auto';
+  });
+  if (stationBgError) stationBgError.hidden = true;
 }
 
 function stopCycleTimer() {
-  if (bgTimer) {
-    clearInterval(bgTimer);
-    bgTimer = null;
-  }
+  if (bgTimer) { clearInterval(bgTimer); bgTimer = null; }
 }
 
 function startCycleTimer() {
@@ -88,6 +70,7 @@ function startCycleTimer() {
     bgIndex = (bgIndex + 1) % activeImages.length;
     const incoming = bgShowingA ? stationBgB : stationBgA;
     const outgoing = bgShowingA ? stationBgA : stationBgB;
+    if (!incoming || !outgoing) return;
 
     incoming.style.willChange = 'opacity, transform';
     outgoing.style.willChange = 'opacity, transform';
@@ -100,7 +83,8 @@ function startCycleTimer() {
 }
 
 document.addEventListener('visibilitychange', () => {
-  document.hidden ? stopCycleTimer() : startCycleTimer();
+  if (document.hidden) stopCycleTimer();
+  else startCycleTimer();
 });
 
 function preloadImage(src) {
@@ -123,11 +107,9 @@ export async function startStationBackground(station) {
   const images = Array.isArray(station.backgroundImages)
     ? station.backgroundImages.filter(Boolean)
     : [];
-
   if (!images.length) return;
 
   const runId = bgRunId;
-
   const firstLoaded = await preloadImage(images[0]);
   if (runId !== bgRunId) return;
 
@@ -164,14 +146,18 @@ export async function startStationBackground(station) {
 export function buildSky() {
   if (!sky) return;
   const count = prefersReducedMotion ? 18 : 34;
-  let html = '';
+  const frag = document.createDocumentFragment();
   for (let i = 0; i < count; i++) {
-    const size = (Math.random() * 2 + 1).toFixed(1);
-    const left = (Math.random() * 100).toFixed(2);
-    const top = (Math.random() * 100).toFixed(2);
-    const dur = (Math.random() * 3 + 2.5).toFixed(1);
-    const delay = (Math.random() * 4).toFixed(1);
-    html += `<div class="star" style="width:${size}px;height:${size}px;left:${left}%;top:${top}%;--twinkle-dur:${dur}s;--twinkle-delay:${delay}s;"></div>`;
+    const star = document.createElement('div');
+    star.className = 'star';
+    star.style.cssText =
+      `width:${(Math.random() * 2 + 1).toFixed(1)}px;` +
+      `height:${(Math.random() * 2 + 1).toFixed(1)}px;` +
+      `left:${(Math.random() * 100).toFixed(2)}%;` +
+      `top:${(Math.random() * 100).toFixed(2)}%;` +
+      `--twinkle-dur:${(Math.random() * 3 + 2.5).toFixed(1)}s;` +
+      `--twinkle-delay:${(Math.random() * 4).toFixed(1)}s;`;
+    frag.appendChild(star);
   }
-  sky.innerHTML = html;
+  sky.replaceChildren(frag);
 }
