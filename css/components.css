@@ -1,36 +1,36 @@
 /* =========================================================================
-   KUKU RADIO — components
+   KUKU RADIO — components (css/components.css)
    -------------------------------------------------------------------------
-   Structural + visual rules for every piece of UI. Animation keyframes
-   and the `animation:` property itself live in animations.css — this
-   file owns layout, color, and `transition:` (state-change) rules.
+   Layout, colour and state-change (`transition:`) rules for every piece
+   of UI. Includes custom glassmorphic volume range styling and 16px
+   equalizer spectrum bars.
    ========================================================================= */
 
-/* ---------- Full-page station background ---------- */
+/* =========================================================================
+   1. STATION BACKDROP
+   ========================================================================= */
+
 #station-background {
   position: fixed;
   inset: 0;
-  width: 100vw;
-  height: 100vh;
   overflow: hidden;
   pointer-events: none;
-  z-index: 0;
-  background: var(--bg-deep);
-  transition: background 0.9s ease;
+  z-index: var(--z-backdrop);
+  background-color: var(--bg-deep);
+  transition: background-color var(--t-theme) var(--ease-std);
 }
 
 .station-bg-layer {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
   background-position: center center;
   background-repeat: no-repeat;
   background-size: cover;
   opacity: 0;
   transform: scale(1.07);
-  transition: opacity 2.6s cubic-bezier(0.45, 0, 0.2, 1), transform 10s cubic-bezier(0.25, 0.1, 0.25, 1);
-  will-change: opacity, transform;
+  transition:
+    opacity var(--t-bg-in) var(--ease-bg),
+    transform var(--t-bg-pan) var(--ease-drift);
 }
 
 .station-bg-layer.active {
@@ -43,43 +43,64 @@
   inset: 0;
   z-index: 2;
   pointer-events: none;
+
+  --scrim-top:    color-mix(in srgb, var(--bg-deep) 44%, transparent);
+  --scrim-mid:    color-mix(in srgb, var(--bg-deep) 24%, transparent);
+  --scrim-bottom: color-mix(in srgb, var(--bg-deep) 60%, transparent);
+  --scrim-centre: color-mix(in srgb, var(--bg-deep) 5%, transparent);
+
   background:
     linear-gradient(180deg,
-      rgba(var(--bg-deep-rgb), 0.44) 0%,
-      rgba(var(--bg-deep-rgb), 0.24) 40%,
-      rgba(var(--bg-deep-rgb), 0.60) 100%),
+      var(--scrim-top) 0%,
+      var(--scrim-mid) 40%,
+      var(--scrim-bottom) 100%),
     radial-gradient(circle at 50% 35%,
-      rgba(var(--bg-deep-rgb), 0.05) 0%,
-      rgba(var(--bg-deep-rgb), 0.44) 100%);
-  transition: background 0.9s ease;
+      var(--scrim-centre) 0%,
+      var(--scrim-top) 100%);
+
+  transition:
+    --scrim-top    var(--t-theme) var(--ease-std),
+    --scrim-mid    var(--t-theme) var(--ease-std),
+    --scrim-bottom var(--t-theme) var(--ease-std),
+    --scrim-centre var(--t-theme) var(--ease-std);
+}
+
+@supports not (color: color-mix(in srgb, red, blue)) {
+  .station-bg-overlay {
+    --scrim-top:    rgba(var(--bg-deep-rgb), 0.44);
+    --scrim-mid:    rgba(var(--bg-deep-rgb), 0.24);
+    --scrim-bottom: rgba(var(--bg-deep-rgb), 0.60);
+    --scrim-centre: rgba(var(--bg-deep-rgb), 0.05);
+  }
 }
 
 .station-bg-error {
   position: absolute;
   left: 50%;
-  bottom: 18px;
+  bottom: var(--s-5);
   transform: translateX(-50%);
   z-index: 3;
-  padding: 8px 12px;
-  border-radius: 999px;
-  background: rgba(0, 0, 0, 0.55);
-  color: var(--cream-dim);
-  font: 0.7rem 'Space Mono', monospace;
+  padding: var(--s-2) var(--s-3);
+  border-radius: var(--r-pill);
+  background: var(--surface-solid);
+  border: 1px solid var(--surface-border);
+  color: var(--text-dim);
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono);
   pointer-events: none;
-  display: none;
 }
 
-/* ---------- Ambient sky / particles ---------- */
+
+/* =========================================================================
+   2. AMBIENT SKY
+   ========================================================================= */
+
 #sky {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  z-index: 2;
+  z-index: var(--z-sky);
   overflow: hidden;
-}
-
-main {
-  z-index: 3;
 }
 
 .star {
@@ -88,11 +109,15 @@ main {
   background: var(--cream);
 }
 
-/* ---------- Header: status row + wordmark ---------- */
+
+/* =========================================================================
+   3. HEADER — status row + wordmark
+   ========================================================================= */
+
 .station-id {
   width: 100%;
   text-align: center;
-  margin-bottom: 1.6rem;
+  margin-bottom: var(--s-6);
 }
 
 .status-row {
@@ -100,210 +125,282 @@ main {
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 0.55rem 0.9rem;
-  margin-bottom: 1rem;
+  gap: var(--s-2) var(--s-3);
+  margin-bottom: var(--s-4);
 }
 
 .on-air,
 .live-count {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  font-family: 'Space Mono', monospace;
-  font-size: 0.68rem;
+  gap: var(--s-2);
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono);
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  transition: color 0.9s ease;
+  transition: color var(--t-theme) var(--ease-std);
 }
 
 .on-air {
-  color: var(--glow-amber);
-  letter-spacing: 0.22em;
+  color: var(--accent);
+  letter-spacing: var(--tracking-caps);
   opacity: 0.9;
+}
+
+.on-air-dot,
+.live-dot {
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--accent);
+  transition:
+    background-color var(--t-theme) var(--ease-std),
+    box-shadow var(--t-theme) var(--ease-std);
 }
 
 .on-air-dot {
   width: 7px;
   height: 7px;
-  border-radius: 50%;
-  background: var(--glow-amber);
-  box-shadow: 0 0 8px 2px var(--glow-amber-dim);
-  transition: background 0.9s ease, box-shadow 0.9s ease;
-}
-
-.live-count {
-  color: var(--cream-dim);
-  padding: 0.32rem 0.75rem;
-  border-radius: 999px;
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  transition: background 0.9s ease, border-color 0.9s ease, color 0.9s ease;
+  box-shadow: 0 0 8px 2px var(--accent-soft);
 }
 
 .live-dot {
   width: 6px;
   height: 6px;
-  flex-shrink: 0;
-  border-radius: 50%;
-  background: var(--glow-amber);
-  box-shadow: 0 0 6px 2px var(--glow-amber-dim);
-  transition: background 0.9s ease, box-shadow 0.9s ease;
+  box-shadow: 0 0 6px 2px var(--accent-soft);
+}
+
+.live-count {
+  color: var(--text-dim);
+  padding: 0.32rem var(--s-3);
+  border-radius: var(--r-pill);
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition:
+    background-color var(--t-theme) var(--ease-std),
+    border-color var(--t-theme) var(--ease-std),
+    color var(--t-theme) var(--ease-std);
 }
 
 #live-count-number {
   display: inline-block;
-  min-width: 1.1em;
   font-weight: 700;
-  color: var(--cream);
-  transition: color 0.9s ease;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  min-width: 2.5ch;
+  text-align: center;
+  transition: color var(--t-theme) var(--ease-std);
 }
 
 h1.wordmark {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-display);
   font-weight: 500;
-  font-size: clamp(2.4rem, 9vw, 3.6rem);
-  letter-spacing: 0.01em;
+  font-size: var(--fs-wordmark);
+  letter-spacing: var(--tracking-display);
   line-height: 1;
   max-width: 100%;
-  background: linear-gradient(180deg, var(--cream) 8%, var(--glow-amber) 78%, var(--blush-rose) 150%);
+  overflow-wrap: anywhere;
+
+  background-image: linear-gradient(180deg,
+    var(--cream) 8%, var(--accent) 78%, var(--accent-2) 150%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  transition: background 0.9s ease;
+}
+
+@supports not ((-webkit-background-clip: text) or (background-clip: text)) {
+  h1.wordmark {
+    color: var(--cream);
+  }
 }
 
 .tagline {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-display);
   font-style: italic;
   font-weight: 400;
-  font-size: 1.02rem;
-  color: var(--cream-dim);
-  margin-top: 0.5rem;
-  letter-spacing: 0.01em;
-  transition: color 0.9s ease;
+  font-size: clamp(0.9rem, 2.6vw, 1.02rem);
+  color: var(--text-dim);
+  margin-top: var(--s-2);
+  transition: color var(--t-theme) var(--ease-std);
 }
 
-/* ---------- Dial console ---------- */
+
+/* =========================================================================
+   4. DIAL CONSOLE
+   ========================================================================= */
+
 .dial-console {
   width: 100%;
-  max-width: 420px;
-  margin: 1.8rem 0 0.6rem;
+  max-width: var(--dial-max);
+  margin: var(--s-6) 0 var(--s-2);
 }
 
 #dial-svg {
   width: 100%;
   height: auto;
-  display: block;
   overflow: visible;
 }
 
 .dial-arc {
   fill: none;
-  stroke: var(--glass-border);
+  stroke: var(--surface-border);
   stroke-width: 1.5;
-  transition: stroke 0.9s ease;
+  transition: stroke var(--t-theme) var(--ease-std);
+}
+
+.tick-minor,
+.tick-major {
+  transition: stroke var(--t-theme) var(--ease-std);
 }
 
 .tick-minor {
-  stroke: var(--cream-faint);
+  stroke: var(--text-faint);
   stroke-width: 1;
-  transition: stroke 0.9s ease;
 }
 
 .tick-major {
-  stroke: var(--cream-dim);
+  stroke: var(--text-dim);
   stroke-width: 1.5;
-  transition: stroke 0.9s ease;
+}
+
+.tick-major.active {
+  stroke: var(--accent);
+  stroke-width: 2;
 }
 
 .tick-label {
-  font-family: 'Space Mono', monospace;
-  font-size: 15px;
+  font-family: var(--font-mono);
+  font-size: clamp(13px, 3.5vw, 15px);
   font-weight: 700;
-  fill: var(--cream-dim);
+  font-variant-numeric: tabular-nums;
+  fill: var(--text-dim);
   text-anchor: middle;
-  transition: fill 0.9s ease;
+  cursor: pointer;
+  user-select: none;
+  transition: fill var(--t-hover) var(--ease-std);
+}
+
+@media (hover: hover) {
+  .tick-label:hover {
+    fill: var(--text);
+  }
 }
 
 .tick-label.active {
-  fill: var(--glow-amber);
+  fill: var(--accent);
 }
 
 #needle-group {
   transform-origin: 200px 210px;
-  transition: transform 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: transform 0.85s var(--ease-out);
 }
 
 .needle {
-  stroke: var(--glow-amber);
+  stroke: var(--accent);
   stroke-width: 2.5;
   stroke-linecap: round;
-  filter: drop-shadow(0 0 6px var(--glow-amber-dim));
-  transition: stroke 0.9s ease, filter 0.9s ease;
+  filter: drop-shadow(0 0 6px var(--accent-soft));
+  transition:
+    stroke var(--t-theme) var(--ease-std),
+    filter var(--t-theme) var(--ease-std);
 }
 
 .needle-hub {
-  fill: var(--glow-amber);
-  filter: drop-shadow(0 0 6px var(--glow-amber-dim));
-  transition: fill 0.9s ease, filter 0.9s ease;
+  fill: var(--accent);
+  filter: drop-shadow(0 0 6px var(--accent-soft));
+  transition:
+    fill var(--t-theme) var(--ease-std),
+    filter var(--t-theme) var(--ease-std);
 }
 
 .dial-veil {
   fill: url(#veilGradient);
   opacity: 0;
-  transition: opacity 0.9s ease;
   pointer-events: none;
+  transition: opacity var(--t-theme) var(--ease-std);
 }
 
 .dial-console.tuning .dial-veil {
   opacity: 1;
 }
 
-#veil-stop-1, #veil-stop-2 {
+#veil-stop-1,
+#veil-stop-2 {
   stop-color: var(--bg-deep);
-  transition: stop-color 0.9s ease;
+  transition: stop-color var(--t-theme) var(--ease-std);
 }
 
-/* ---------- Frequency buttons ---------- */
+
+/* =========================================================================
+   5. FREQUENCY BUTTONS
+   ========================================================================= */
+
 .frequency-row {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.55rem;
-  margin: 1.4rem 0 2rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
+  gap: var(--s-2);
   width: 100%;
-  padding-inline: 0.1rem;
+  margin: var(--s-6) 0 var(--s-8);
 }
 
 .freq-btn {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 0.88rem;
-  font-weight: 500;
-  color: var(--cream-dim);
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  border-radius: 100px;
-  padding: 0.5rem 1rem;
-  min-height: 42px;
-  white-space: nowrap;
-  cursor: pointer;
-  transition: transform 0.15s ease, border-color 0.25s ease, background 0.25s ease, color 0.25s ease;
+  --accent-tint:   color-mix(in srgb, var(--accent) 22%, transparent);
+  --accent-2-tint: color-mix(in srgb, var(--accent-2) 14%, transparent);
+
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
+  justify-content: center;
+  gap: var(--s-2);
+  min-height: 42px;
+  padding: var(--s-2) var(--s-4);
+  font-family: var(--font-ui);
+  font-size: clamp(0.78rem, 2.4vw, 0.88rem);
+  font-weight: 500;
+  color: var(--text-dim);
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--r-pill);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  cursor: pointer;
+  transition:
+    transform var(--t-press) var(--ease-std),
+    border-color var(--t-hover) var(--ease-std),
+    background-color var(--t-hover) var(--ease-std),
+    color var(--t-hover) var(--ease-std);
 }
 
-.freq-btn .num {
-  font-family: 'Space Mono', monospace;
-  color: var(--soft-lavender);
-  font-size: 0.9rem;
+@supports not (color: color-mix(in srgb, red, blue)) {
+  .freq-btn {
+    --accent-tint:   rgba(var(--accent-rgb), 0.22);
+    --accent-2-tint: rgba(var(--accent-2-rgb), 0.14);
+  }
+}
+
+/* Supports both .num/.freq-num and .label/.freq-name */
+.freq-btn .num,
+.freq-btn .freq-num {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
   font-weight: 700;
-  transition: color 0.4s ease;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent-3);
+  transition: color var(--t-enter) var(--ease-std);
 }
 
-.freq-btn:hover {
-  border-color: var(--glow-amber-dim);
-  color: var(--cream);
+.freq-btn .label,
+.freq-btn .freq-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (hover: hover) {
+  .freq-btn:hover {
+    border-color: var(--accent-soft);
+    color: var(--text);
+  }
 }
 
 .freq-btn:active {
@@ -311,38 +408,60 @@ h1.wordmark {
 }
 
 .freq-btn.active {
-  background: linear-gradient(135deg, rgba(var(--glow-amber-rgb), 0.22), rgba(var(--blush-rose-rgb), 0.14));
-  border-color: var(--glow-amber-dim);
-  color: var(--cream);
+  background-image: linear-gradient(135deg,
+    var(--accent-tint), var(--accent-2-tint));
+  border-color: var(--accent-soft);
+  color: var(--text);
+  box-shadow: inset 0 1px 0 var(--surface-highlight);
 }
 
-.freq-btn.active .num {
-  color: var(--glow-amber);
+.freq-btn.active .num,
+.freq-btn.active .freq-num {
+  color: var(--accent);
 }
 
-/* ---------- Now playing card ---------- */
+
+/* =========================================================================
+   6. NOW PLAYING CARD
+   ========================================================================= */
+
 .now-playing {
-  width: 100%;
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  border-radius: 20px;
-  padding: 1.1rem 1.3rem 1rem;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  box-shadow: 0 15px 45px var(--shadow-deep);
-  transition: background 0.9s ease, border-color 0.9s ease, box-shadow 0.9s ease;
   position: sticky;
-  top: 0.75rem;
-  z-index: 5;
+  top: var(--s-3);
+  z-index: var(--z-card);
+  width: 100%;
+  padding: var(--s-4) var(--s-5) var(--s-4);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--r-xl);
+  background: var(--surface);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   overflow: hidden;
+
+  box-shadow:
+    inset 0 1px 0 var(--surface-highlight),
+    var(--shadow-card);
+
+  transition:
+    background-color var(--t-theme) var(--ease-std),
+    border-color var(--t-theme) var(--ease-std),
+    box-shadow var(--t-theme) var(--ease-std);
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .now-playing,
+  .quick-link,
+  .install-hint {
+    background: var(--surface-solid);
+  }
 }
 
 .track-meta {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: 0.85rem;
+  gap: var(--s-4);
+  margin-bottom: var(--s-3);
 }
 
 .track-meta-text {
@@ -350,47 +469,47 @@ h1.wordmark {
 }
 
 .freq-label {
-  font-family: 'Space Mono', monospace;
-  font-size: 0.7rem;
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono);
   letter-spacing: 0.12em;
-  color: var(--glow-amber);
   text-transform: uppercase;
-  opacity: 0.85;
-  margin-bottom: 0.3rem;
-  transition: color 0.9s ease;
+  color: var(--accent);
+  opacity: 0.88;
+  margin-bottom: var(--s-1);
+  transition: color var(--t-theme) var(--ease-std);
 }
 
 .track-title {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-display);
   font-weight: 500;
-  font-size: 1.28rem;
+  font-size: var(--fs-title);
   line-height: 1.22;
-  color: var(--cream);
-  overflow: hidden;
-  text-overflow: ellipsis;
+  color: var(--text);
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
-  transition: color 0.9s ease;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  transition: color var(--t-theme) var(--ease-std);
 }
 
 .track-title.empty {
   font-style: italic;
-  color: var(--cream-dim);
   font-weight: 400;
+  color: var(--text-dim);
 }
 
 .track-subtitle {
-  font-size: 0.83rem;
+  font-size: var(--fs-sm);
   font-style: italic;
-  color: var(--cream-dim);
-  margin-top: 0.3rem;
-  transition: color 0.9s ease;
+  color: var(--text-dim);
+  margin-top: var(--s-1);
+  overflow-wrap: anywhere;
+  transition: color var(--t-theme) var(--ease-std);
 }
 
-.track-subtitle[hidden] {
-  display: none;
-}
+/* ---------- 5-Bar Equalizer (16px base height for scaleY) ---------- */
 
 .eq-bars {
   display: flex;
@@ -398,41 +517,41 @@ h1.wordmark {
   gap: 3px;
   height: 18px;
   flex-shrink: 0;
-  margin-top: 0.3rem;
+  margin-top: var(--s-1);
 }
 
 .eq-bars span {
   width: 3px;
-  background: var(--glow-amber);
+  height: 16px; /* Fixed: allows scaleY(0.22..1) in animations.css to render full height */
   border-radius: 2px;
-  height: 4px;
-  opacity: 0.5;
-  animation-play-state: paused;
-  transition: background 0.9s ease;
+  background: var(--accent);
+  opacity: 0.45;
+  transition:
+    background-color var(--t-theme) var(--ease-std),
+    opacity var(--t-hover) var(--ease-std);
 }
 
 .eq-bars.playing span {
   opacity: 1;
 }
 
-.eq-bars span:nth-child(1) { animation-delay: 0s; }
-.eq-bars span:nth-child(2) { animation-delay: 0.2s; }
-.eq-bars span:nth-child(3) { animation-delay: 0.35s; }
 
-/* Progress bar */
+/* ---------- Progress Bar ---------- */
+
 .progress-row {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
-  margin-bottom: 0.85rem;
+  gap: var(--s-2);
+  margin-bottom: var(--s-3);
 }
 
 .time {
-  font-family: 'Space Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 0.72rem;
-  color: var(--cream-faint);
-  min-width: 34px;
-  transition: color 0.9s ease;
+  color: var(--text-faint);
+  font-variant-numeric: tabular-nums;
+  min-width: 4ch;
+  transition: color var(--t-theme) var(--ease-std);
 }
 
 .time.current {
@@ -440,24 +559,37 @@ h1.wordmark {
 }
 
 #progress-bar {
+  --track-bed: color-mix(in srgb, var(--cream) 14%, transparent);
+
+  position: relative;
   flex: 1;
   height: 5px;
-  background: rgba(var(--cream-rgb), 0.12);
-  border-radius: 10px;
-  position: relative;
+  border-radius: var(--r-pill);
+  background: var(--track-bed);
   cursor: pointer;
-  transition: background 0.9s ease;
+  touch-action: none;
+  transition:
+    height var(--t-hover) var(--ease-std),
+    background-color var(--t-theme) var(--ease-std);
+}
+
+@supports not (color: color-mix(in srgb, red, blue)) {
+  #progress-bar {
+    --track-bed: rgba(var(--cream-rgb), 0.14);
+  }
+}
+
+#progress-bar:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 4px;
 }
 
 #progress-fill {
   position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
+  inset: 0 auto 0 0;
   width: 0%;
-  background: linear-gradient(90deg, var(--blush-rose), var(--glow-amber));
-  border-radius: 10px;
-  transition: background 0.9s ease;
+  border-radius: var(--r-pill);
+  background-image: linear-gradient(90deg, var(--accent-2), var(--accent));
 }
 
 #progress-bar::after {
@@ -467,154 +599,238 @@ h1.wordmark {
   top: 50%;
   width: 12px;
   height: 12px;
-  background: var(--cream);
   border-radius: 50%;
+  background: var(--cream);
+  box-shadow: 0 0 8px var(--shadow-key);
   transform: translate(-50%, -50%);
-  box-shadow: 0 0 8px var(--shadow-deep);
   opacity: 0;
-  transition: opacity 0.2s, background 0.9s ease, box-shadow 0.9s ease;
+  pointer-events: none;
+  transition: opacity var(--t-hover) var(--ease-std);
 }
 
-#progress-bar:hover::after,
+@media (hover: hover) {
+  #progress-bar:hover {
+    height: 7px;
+  }
+  #progress-bar:hover::after {
+    opacity: 1;
+  }
+}
+
 #progress-bar:focus-visible::after {
   opacity: 1;
 }
 
-/* Transport */
+
+/* ---------- Transport Controls ---------- */
+
 .transport {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 1.5rem;
+  gap: clamp(1.3rem, 8vw, 2.8rem);
 }
 
 .transport button {
-  background: none;
-  border: none;
-  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.75rem;
-  transition: transform 0.15s ease, color 0.9s ease;
+  padding: var(--s-3);
+  background: none;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition:
+    transform var(--t-press) var(--ease-std),
+    color var(--t-theme) var(--ease-std);
 }
 
-.transport button:hover {
-  color: var(--glow-amber);
-  transform: scale(1.08);
+@media (hover: hover) {
+  .transport button:hover:not(:disabled) {
+    color: var(--accent);
+    transform: scale(1.08);
+  }
+  #btn-play:hover:not(:disabled) {
+    color: var(--on-accent);
+    transform: scale(1.05);
+  }
 }
 
-.transport button:active {
+.transport button:active:not(:disabled) {
   transform: scale(0.88);
 }
 
 .transport button:disabled {
-  opacity: 0.3;
+  opacity: 0.38;
   cursor: not-allowed;
 }
 
-.transport button:disabled:hover,
-.transport button:disabled:active {
-  color: var(--cream);
-  transform: none;
-}
-
 #btn-play {
-  width: 58px;
-  height: 58px;
+  width: clamp(52px, 14vw, 58px);
+  aspect-ratio: 1;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--glow-amber), var(--blush-rose));
-  color: var(--bg-deep);
-  box-shadow: 0 8px 26px var(--glow-amber-dim);
-  transition: transform 0.15s ease, color 0.9s ease, background 0.9s ease, box-shadow 0.9s ease;
+  color: var(--on-accent);
+  background-image: linear-gradient(135deg, var(--accent), var(--accent-2));
+  box-shadow: var(--shadow-glow);
+  transition:
+    transform var(--t-press) var(--ease-std),
+    box-shadow var(--t-theme) var(--ease-std);
 }
 
-#btn-play:hover {
-  color: var(--bg-deep);
-  transform: scale(1.05);
-}
-
-#btn-play:active {
+#btn-play:active:not(:disabled) {
   transform: scale(0.93);
 }
+
+
+/* ---------- Custom Glass Volume Slider ---------- */
 
 .volume-row {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
-  margin-top: 0.9rem;
-  padding-top: 0.8rem;
-  border-top: 1px solid var(--glass-border);
-  transition: border-color 0.9s ease;
+  gap: var(--s-2);
+  margin-top: var(--s-3);
+  padding-top: var(--s-3);
+  border-top: 1px solid var(--surface-border);
+  transition: border-color var(--t-theme) var(--ease-std);
+}
+
+.volume-icon {
+  color: var(--text-faint);
+  flex-shrink: 0;
+  transition: color var(--t-theme) var(--ease-std);
 }
 
 #volume-slider {
+  -webkit-appearance: none;
+  appearance: none;
   flex: 1;
-  accent-color: var(--glow-amber);
-  height: 4px;
+  height: 5px;
+  border-radius: var(--r-pill);
+  background: color-mix(in srgb, var(--cream) 14%, transparent);
+  accent-color: var(--accent);
   cursor: pointer;
+  transition: background-color var(--t-theme) var(--ease-std);
 }
 
-/* ---------- Tracklist ---------- */
+#volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--cream);
+  box-shadow: 0 0 8px var(--accent-soft);
+  transition: transform var(--t-press) var(--ease-std), background-color var(--t-theme) var(--ease-std);
+}
+
+#volume-slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--cream);
+  box-shadow: 0 0 8px var(--accent-soft);
+  transition: transform var(--t-press) var(--ease-std), background-color var(--t-theme) var(--ease-std);
+}
+
+@media (hover: hover) {
+  #volume-slider:hover::-webkit-slider-thumb {
+    transform: scale(1.18);
+  }
+  #volume-slider:hover::-moz-range-thumb {
+    transform: scale(1.18);
+  }
+}
+
+#volume-slider:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 4px;
+}
+
+
+/* =========================================================================
+   7. TRACKLIST
+   ========================================================================= */
+
 .tracklist-section {
-  width: 100%;
-  margin-top: 1.8rem;
-  padding-bottom: 8rem;
   position: relative;
-  z-index: 4;
+  z-index: var(--z-tracklist);
+  width: 100%;
+  margin-top: var(--s-6);
+  padding-bottom: var(--rail-clear, var(--s-8));
+}
+
+@media (max-width: 900px) {
+  .tracklist-section {
+    --rail-clear: 7rem;
+  }
 }
 
 .tracklist-heading {
-  font-family: 'Space Mono', monospace;
-  font-size: 0.7rem;
-  letter-spacing: 0.14em;
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono);
+  letter-spacing: var(--tracking-mono);
   text-transform: uppercase;
-  color: var(--cream-faint);
-  margin-bottom: 0.8rem;
-  transition: color 0.9s ease;
+  color: var(--text-faint);
+  margin-bottom: var(--s-3);
+  transition: color var(--t-theme) var(--ease-std);
 }
 
 #tracklist {
-  list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
+  gap: var(--s-1);
   width: 100%;
-  min-height: 1px;
-  overflow: visible;
+  list-style: none;
 }
 
 #tracklist .empty-note {
   display: block;
   width: 100%;
-  padding: .9rem 0 1.2rem;
-  color: var(--cream-faint);
-  font-size: .82rem;
+  padding: var(--s-3) 0 var(--s-5);
+  color: var(--text-faint);
+  font-size: var(--fs-sm);
   font-style: italic;
   line-height: 1.55;
-  transition: color 0.9s ease;
+  transition: color var(--t-theme) var(--ease-std);
 }
 
 #tracklist li button {
-  width: 100%;
   display: flex;
   align-items: center;
-  gap: 0.8rem;
+  gap: var(--s-3);
+  width: 100%;
+  padding: var(--s-2) var(--s-3);
+  font-family: var(--font-ui);
+  font-size: clamp(0.82rem, 2.5vw, 0.9rem);
+  text-align: left;
+  color: var(--text-dim);
   background: none;
   border: 1px solid transparent;
-  border-radius: 12px;
-  padding: 0.65rem 0.8rem;
-  color: var(--cream-dim);
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 0.9rem;
-  text-align: left;
+  border-radius: var(--r-sm);
   cursor: pointer;
-  transition: transform 0.15s ease, background 0.2s ease, border-color 0.2s ease, color 0.9s ease;
+  transition:
+    transform var(--t-press) var(--ease-std),
+    background-color var(--t-hover) var(--ease-std),
+    border-color var(--t-hover) var(--ease-std),
+    color var(--t-theme) var(--ease-std);
 }
 
-#tracklist li button:hover {
-  background: var(--glass-bg);
-  border-color: var(--glass-border);
+.track-name,
+#tracklist li button span:not(.track-index) {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (hover: hover) {
+  #tracklist li button:hover {
+    background: var(--surface);
+    border-color: var(--surface-border);
+    color: var(--text);
+  }
 }
 
 #tracklist li button:active {
@@ -622,64 +838,95 @@ h1.wordmark {
 }
 
 #tracklist li button.active {
-  background: var(--glass-bg);
-  border-color: var(--glow-amber-dim);
-  color: var(--cream);
+  background: var(--surface);
+  border-color: var(--accent-soft);
+  color: var(--text);
+  font-weight: 600;
+}
+
+#tracklist li button.active .track-index {
+  color: var(--accent);
 }
 
 #tracklist li button:focus-visible {
-  outline: 2px solid var(--glow-amber);
+  outline: var(--focus-ring);
   outline-offset: -2px;
 }
 
 .track-index {
-  font-family: 'Space Mono', monospace;
-  font-size: 0.75rem;
-  color: var(--cream-faint);
-  width: 1.4rem;
   flex-shrink: 0;
-  transition: color 0.9s ease;
+  width: 1.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-faint);
+  transition: color var(--t-theme) var(--ease-std);
 }
 
-/* ---------- Quick links / PWA install ---------- */
+
+/* =========================================================================
+   8. QUICK LINKS + PWA INSTALL
+   ========================================================================= */
+
 .quick-links {
   position: fixed;
-  pointer-events: none;
-  right: max(14px, env(safe-area-inset-right));
   top: 50%;
+  right: max(14px, env(safe-area-inset-right));
   transform: translateY(-50%);
-  z-index: 50;
+  z-index: var(--z-rail);
   display: flex;
   flex-direction: column;
-  gap: 0.55rem;
-  width: min(190px, 18vw);
+  gap: var(--s-2);
+  width: min(var(--rail-w), 18vw);
+  pointer-events: none;
 }
 
 .quick-link {
-  pointer-events: auto;
+  --rail-bg: color-mix(in srgb, var(--bg-deep) 72%, transparent);
+  --rail-bg-hover: color-mix(in srgb, var(--bg-deep) 90%, transparent);
+
   display: flex;
   align-items: center;
-  gap: 0.55rem;
+  gap: var(--s-2);
   min-height: 42px;
-  padding: 0.62rem 0.72rem;
-  border: 1px solid var(--glass-border);
-  border-radius: 14px;
-  color: var(--cream);
-  background: rgba(var(--bg-deep-rgb), 0.72);
+  padding: var(--s-2);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--text);
+  text-decoration: none;
+  background: var(--rail-bg);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--r-md);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, .22);
-  text-decoration: none;
-  font-size: 0.74rem;
-  font-weight: 700;
-  transition: transform .15s ease, border-color .2s ease, background .2s ease;
+  box-shadow:
+    inset 0 1px 0 var(--surface-highlight),
+    var(--shadow-rail);
+  pointer-events: auto;
+  transition:
+    transform var(--t-press) var(--ease-std),
+    border-color var(--t-hover) var(--ease-std),
+    background-color var(--t-hover) var(--ease-std);
 }
 
-.quick-link:hover,
+@supports not (color: color-mix(in srgb, red, blue)) {
+  .quick-link {
+    --rail-bg: rgba(var(--bg-deep-rgb), 0.72);
+    --rail-bg-hover: rgba(var(--bg-deep-rgb), 0.9);
+  }
+}
+
+@media (hover: hover) {
+  .quick-link:hover {
+    transform: translateX(-3px);
+    border-color: var(--accent-soft);
+    background: var(--rail-bg-hover);
+  }
+}
+
 .quick-link:focus-visible {
-  transform: translateX(-3px);
-  border-color: var(--glow-amber-dim);
-  background: rgba(var(--bg-deep-rgb), 0.9);
+  border-color: var(--accent-soft);
+  background: var(--rail-bg-hover);
 }
 
 .quick-link:active {
@@ -688,73 +935,59 @@ h1.wordmark {
 
 .quick-icon-img,
 .quick-icon-fallback {
+  flex: 0 0 28px;
   width: 28px;
   height: 28px;
-  flex: 0 0 28px;
-  display: block;
   object-fit: contain;
 }
 
 .quick-icon-fallback {
   display: grid;
   place-items: center;
-  border-radius: 8px;
-  background: rgba(var(--cream-rgb), 0.08);
-  font-size: .82rem;
+  border-radius: var(--r-xs);
+  background: var(--surface);
+  font-size: 0.82rem;
 }
 
 .install-button {
-  border: 1px solid var(--glow-amber-dim);
-  cursor: pointer;
   font-family: inherit;
-}
-
-.install-button[hidden] {
-  display: none;
+  border: 1px solid var(--accent-soft);
+  cursor: pointer;
 }
 
 .install-hint {
   position: fixed;
   right: max(14px, env(safe-area-inset-right));
   bottom: max(14px, env(safe-area-inset-bottom));
-  z-index: 51;
-  max-width: min(330px, calc(100vw - 28px));
-  padding: 0.8rem 1rem;
-  border: 1px solid var(--glass-border);
-  border-radius: 14px;
-  background: rgba(var(--bg-deep-rgb), 0.92);
-  color: var(--cream-dim);
+  z-index: var(--z-hint);
+  max-width: min(330px, calc(100% - var(--s-8)));
+  padding: var(--s-3) var(--s-4);
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: var(--text-dim);
+  background: var(--surface-solid);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--r-md);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  box-shadow: 0 15px 40px rgba(0, 0, 0, .3);
-  font-size: .78rem;
-  line-height: 1.45;
-}
-
-.install-hint[hidden] {
-  display: none;
+  box-shadow: var(--shadow-card);
 }
 
 footer {
-  margin-top: 3rem;
+  margin-top: var(--s-12);
   text-align: center;
-  font-family: 'Space Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 0.68rem;
   letter-spacing: 0.1em;
-  color: var(--cream-faint);
   text-transform: uppercase;
-  transition: color 0.9s ease;
+  color: var(--text-faint);
+  transition: color var(--t-theme) var(--ease-std);
 }
 
-/* ==========================================================================
-   Responsive
-   ========================================================================== */
 
-@media (min-width: 1100px) {
-  .quick-links {
-    width: 185px;
-  }
-}
+/* =========================================================================
+   9. RESPONSIVE
+   ========================================================================= */
 
 @media (max-width: 900px) {
   .quick-links {
@@ -762,14 +995,10 @@ footer {
     bottom: max(14px, env(safe-area-inset-bottom));
     transform: none;
     width: auto;
+    max-width: min(94vw, 520px);
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: flex-end;
-    max-width: min(94vw, 520px);
-  }
-
-  .quick-link {
-    width: auto;
   }
 
   .quick-link span.label {
@@ -778,123 +1007,85 @@ footer {
 
   .quick-icon-img,
   .quick-icon-fallback {
+    flex-basis: 30px;
     width: 30px;
     height: 30px;
-    flex-basis: 30px;
-  }
-
-  .tracklist-section {
-    padding-bottom: 8rem;
   }
 }
 
 @media (max-width: 600px) {
-  .wordmark {
-    font-size: clamp(2.05rem, 13vw, 3rem);
-  }
-
-  .tagline {
-    font-size: .9rem;
-  }
-
   .dial-console {
-    margin-top: 1rem;
-  }
-
-  .status-row {
-    gap: 0.45rem 0.6rem;
+    margin-top: var(--s-4);
   }
 
   .frequency-row {
-    gap: .42rem;
-    margin: 1rem 0 1.25rem;
-  }
-
-  .freq-btn {
-    flex: 1 1 calc(50% - .42rem);
-    justify-content: center;
-    padding: .58rem .55rem;
-    font-size: .76rem;
-  }
-
-  .freq-btn .num {
-    font-size: .82rem;
+    grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr));
+    margin: var(--s-4) 0 var(--s-5);
   }
 
   .now-playing {
-    border-radius: 16px;
-    padding: 0.9rem 0.9rem 0.85rem;
-  }
-
-  .track-title {
-    font-size: 1.15rem;
-  }
-
-  .transport {
-    gap: clamp(1.4rem, 12vw, 2.8rem);
-  }
-
-  #btn-play {
-    width: 58px;
-    height: 58px;
-  }
-
-  #tracklist li button {
-    padding: .7rem .55rem;
-    gap: .55rem;
-    font-size: .82rem;
-  }
-}
-
-@media (max-width: 560px) {
-  .frequency-row {
-    gap: 0.45rem;
-  }
-
-  .freq-btn {
-    font-size: 0.8rem;
-    padding: 0.48rem 0.78rem;
-  }
-
-  .freq-btn .num {
-    font-size: 0.82rem;
-  }
-
-  .tick-label {
-    font-size: 13px;
-  }
-}
-
-@media (max-width: 420px) {
-  .track-title {
-    font-size: 1.15rem;
-  }
-
-  .transport {
-    gap: 1.3rem;
-  }
-
-  #btn-play {
-    width: 52px;
-    height: 52px;
+    padding: var(--s-3);
+    border-radius: var(--r-lg);
   }
 }
 
 @media (max-width: 380px) {
-  .freq-btn {
-    flex-basis: 100%;
-  }
-
   .quick-links {
-    gap: .35rem;
+    gap: var(--s-1);
   }
 
   .quick-link {
     min-height: 38px;
-    padding: .4rem;
+    padding: var(--s-1);
+  }
+}
+
+
+/* =========================================================================
+   10. FORCED COLORS
+   ========================================================================= */
+
+@media (forced-colors: active) {
+  .station-bg-layer,
+  .station-bg-overlay,
+  #sky,
+  .star {
+    display: none;
   }
 
-  .status-row {
-    font-size: 0.95em;
+  .now-playing,
+  .quick-link,
+  .install-hint,
+  .live-count,
+  .freq-btn {
+    border: 1px solid CanvasText;
+    background: Canvas;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .freq-btn.active,
+  #tracklist li button.active {
+    border-color: Highlight;
+    color: Highlight;
+    forced-color-adjust: none;
+  }
+
+  #btn-play {
+    border: 2px solid CanvasText;
+    background: Canvas;
+    forced-color-adjust: none;
+  }
+
+  h1.wordmark {
+    color: CanvasText;
+    background: none;
+    -webkit-text-fill-color: CanvasText;
+  }
+
+  #progress-fill {
+    background: Highlight;
+    forced-color-adjust: none;
   }
 }
