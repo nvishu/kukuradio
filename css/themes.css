@@ -161,11 +161,11 @@ body {
   --accent-soft:  color-mix(in srgb, var(--accent) 36%, transparent);
   --accent-faint: color-mix(in srgb, var(--accent) 16%, transparent);
 
-  --surface:           color-mix(in srgb, var(--bg-deep) 62%, rgba(255, 255, 255, 0.08));
-  --surface-elevated:  color-mix(in srgb, var(--cream) 9%, transparent);
-  --surface-solid:     color-mix(in oklab, var(--bg-deep) 94%, black);
-  --surface-border:    color-mix(in srgb, var(--accent) 24%, rgba(255, 255, 255, 0.08));
-  --surface-highlight: color-mix(in srgb, var(--cream) 14%, transparent);
+  --surface:           color-mix(in srgb, var(--bg-deep) 24%, rgba(255, 255, 255, 0.04));
+  --surface-elevated:  color-mix(in srgb, var(--cream) 7%, transparent);
+  --surface-solid:     color-mix(in oklab, var(--bg-deep) 88%, black);
+  --surface-border:    color-mix(in srgb, var(--accent) 28%, rgba(255, 255, 255, 0.14));
+  --surface-highlight: color-mix(in srgb, var(--cream) 18%, transparent);
 
   --shadow-tint: color-mix(in oklab, var(--bg-deep) 65%, black);
   --shadow-key:  color-mix(in srgb, var(--shadow-tint) 60%, transparent);
