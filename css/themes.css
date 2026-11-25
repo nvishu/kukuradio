@@ -1,11 +1,19 @@
 /* =========================================================================
-   KUKU RADIO — design tokens
+   KUKU RADIO — design tokens (css/themes.css)
+   -------------------------------------------------------------------------
+   Single source of truth for color, type, spacing, radius, motion and
+   z-index. Nothing in this file selects a component; it only declares
+   custom properties.
+   ========================================================================= */
+
+/* =========================================================================
+   1. GLOBAL TOKENS — identical for every theme
    ========================================================================= */
 
 :root {
   color-scheme: dark;
 
-  /* Type */
+  /* ---------- Type ---------------------------------------------------- */
   --font-display: 'Fraunces', Georgia, serif;
   --font-ui: 'Plus Jakarta Sans', 'Noto Sans Devanagari', 'Noto Sans Gurmukhi',
              system-ui, -apple-system, sans-serif;
@@ -22,7 +30,7 @@
   --tracking-mono:    0.14em;
   --tracking-caps:    0.22em;
 
-  /* Space */
+  /* ---------- Space (4px base) ---------------------------------------- */
   --s-1: 0.25rem;
   --s-2: 0.5rem;
   --s-3: 0.75rem;
@@ -33,7 +41,7 @@
   --s-10: 2.5rem;
   --s-12: 3rem;
 
-  /* Radius */
+  /* ---------- Radius -------------------------------------------------- */
   --r-xs: 8px;
   --r-sm: 12px;
   --r-md: 14px;
@@ -41,7 +49,7 @@
   --r-xl: 20px;
   --r-pill: 999px;
 
-  /* Motion */
+  /* ---------- Motion -------------------------------------------------- */
   --t-press:  0.15s;
   --t-hover:  0.25s;
   --t-enter:  0.4s;
@@ -54,7 +62,7 @@
   --ease-bg:    cubic-bezier(0.45, 0, 0.2, 1);
   --ease-drift: cubic-bezier(0.25, 0.1, 0.25, 1);
 
-  /* Z */
+  /* ---------- Z-index ------------------------------------------------- */
   --z-backdrop:  0;
   --z-sky:       2;
   --z-main:      3;
@@ -63,7 +71,7 @@
   --z-rail:      50;
   --z-hint:      51;
 
-  /* Metrics */
+  /* ---------- Metrics ------------------------------------------------- */
   --content-max: 720px;
   --dial-max: 420px;
   --rail-w: 190px;
@@ -71,10 +79,12 @@
   --focus-width: 2px;
 }
 
+
 /* =========================================================================
-   THEME SEEDS — refined palettes for better contrast & depth
+   2. THEME SEEDS — 7 colors each
    ========================================================================= */
 
+/* Late Night 90s — rose-red / coral-orange / gold */
 body,
 body[data-theme="rose"] {
   --bg-deep: #170812;
@@ -92,6 +102,7 @@ body[data-theme="rose"] {
   --cream-rgb: 255, 246, 240;
 }
 
+/* Missing You — ice blue / cyan */
 body[data-theme="original"] {
   --bg-deep: #0a141f;
   --bg-deep-rgb: 10, 20, 31;
@@ -108,6 +119,7 @@ body[data-theme="original"] {
   --cream-rgb: 244, 249, 251;
 }
 
+/* Bhojpuri Melody — magenta / lime */
 body[data-theme="sky"] {
   --bg-deep: #160b24;
   --bg-deep-rgb: 22, 11, 36;
@@ -124,6 +136,7 @@ body[data-theme="sky"] {
   --cream-rgb: 255, 245, 255;
 }
 
+/* Punjabi Funk — amber / dusty pink / lavender */
 body[data-theme="funky"] {
   --bg-deep: #0f0e1a;
   --bg-deep-rgb: 15, 14, 26;
@@ -140,6 +153,7 @@ body[data-theme="funky"] {
   --cream-rgb: 247, 237, 224;
 }
 
+/* Party Vibes — electric teal / coral / gold */
 body[data-theme="party"] {
   --bg-deep: #051a1c;
   --bg-deep-rgb: 5, 26, 28;
@@ -156,6 +170,7 @@ body[data-theme="party"] {
   --cream-rgb: 240, 255, 253;
 }
 
+/* Universal Destiny — tan / warm grey */
 body[data-theme="brown"] {
   --bg-deep: #150f0c;
   --bg-deep-rgb: 21, 15, 12;
@@ -172,30 +187,36 @@ body[data-theme="brown"] {
   --cream-rgb: 244, 239, 231;
 }
 
+
 /* =========================================================================
-   DERIVED TOKENS
+   3. DERIVED TOKENS — computed from seeds
    ========================================================================= */
 
 body {
+  /* Text */
   --text:       var(--cream);
   --text-dim:   color-mix(in srgb, var(--cream) 78%, transparent);
   --text-faint: color-mix(in srgb, var(--cream) 58%, transparent);
   --on-accent:  var(--bg-deep);
 
+  /* Accent tints */
   --accent-soft:  color-mix(in srgb, var(--accent) 36%, transparent);
   --accent-faint: color-mix(in srgb, var(--accent) 18%, transparent);
 
+  /* Glass surfaces */
   --surface:           color-mix(in srgb, var(--cream) 7%, transparent);
   --surface-solid:     color-mix(in oklab, var(--bg-deep) 92%, black);
   --surface-border:    color-mix(in srgb, var(--accent) 22%, transparent);
   --surface-highlight: color-mix(in srgb, var(--cream) 11%, transparent);
 
+  /* Elevation */
   --shadow-tint: color-mix(in oklab, var(--bg-deep) 62%, black);
   --shadow-key:  color-mix(in srgb, var(--shadow-tint) 55%, transparent);
   --shadow-card: 0 15px 45px var(--shadow-key);
   --shadow-rail: 0 10px 30px color-mix(in srgb, var(--shadow-tint) 40%, transparent);
   --shadow-glow: 0 8px 26px var(--accent-soft);
 
+  /* Focus */
   --focus-ring: var(--focus-width) solid var(--accent);
 }
 
@@ -212,6 +233,11 @@ body {
     --shadow-key: rgba(var(--bg-deep-rgb), 0.62);
   }
 }
+
+
+/* =========================================================================
+   4. PREFERENCE OVERRIDES
+   ========================================================================= */
 
 @media (prefers-contrast: more) {
   body {
