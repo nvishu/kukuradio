@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>KUKU RADIO</title>
+<title>KUKU RADIO — Studio Edition</title>
 <meta name="description" content="KUKU RADIO — a private radio station, tuned just for us. Tune a frequency and let it play.">
 <meta name="theme-color" content="#170812">
 <link rel="manifest" href="manifest.webmanifest">
@@ -17,9 +17,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" href="data/stations.json" as="fetch" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
-<!-- Correct token cascade order: themes -> base -> components -> animations -->
 <link rel="stylesheet" href="css/themes.css">
 <link rel="stylesheet" href="css/base.css">
 <link rel="stylesheet" href="css/components.css">
@@ -27,6 +26,7 @@
 </head>
 <body data-theme="rose">
 
+<!-- Ambient Photographic Backdrop -->
 <div id="station-background" aria-hidden="true">
   <div class="station-bg-layer" id="station-bg-a"></div>
   <div class="station-bg-layer" id="station-bg-b"></div>
@@ -36,107 +36,207 @@
   </div>
 </div>
 
+<!-- Starfield -->
 <div id="sky" aria-hidden="true"></div>
 
-<nav class="quick-links" aria-label="Music and KUKU RADIO links">
-  <a class="quick-link" href="https://music.youtube.com/" target="_blank" rel="noopener noreferrer" aria-label="Open YouTube Music">
-    <img class="quick-icon-img" src="icons/youtube-music.svg" alt="" loading="lazy" onerror="this.outerHTML='&lt;span class=&quot;quick-icon-fallback&quot;&gt;&#9654;&lt;/span&gt;'"><span class="label">YouTube Music</span>
-  </a>
-  <a class="quick-link" href="https://open.spotify.com/" target="_blank" rel="noopener noreferrer" aria-label="Open Spotify">
-    <img class="quick-icon-img" src="icons/spotify.svg" alt="" loading="lazy" onerror="this.outerHTML='&lt;span class=&quot;quick-icon-fallback&quot;&gt;&#9679;&lt;/span&gt;'"><span class="label">Spotify</span>
-  </a>
-  <a class="quick-link" href="https://www.jiosaavn.com/" target="_blank" rel="noopener noreferrer" aria-label="Open JioSaavn">
-    <img class="quick-icon-img" src="icons/jiosaavn.svg" alt="" loading="lazy" onerror="this.outerHTML='&lt;span class=&quot;quick-icon-fallback&quot;&gt;&#9834;&lt;/span&gt;'"><span class="label">JioSaavn</span>
-  </a>
-  <a class="quick-link" id="song-request-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="Request a new song on WhatsApp">
-    <img class="quick-icon-img" src="icons/whatsapp.svg" alt="" loading="lazy" onerror="this.outerHTML='&lt;span class=&quot;quick-icon-fallback&quot;&gt;&#9742;&lt;/span&gt;'"><span class="label">Request Song</span>
-  </a>
-  <button class="quick-link install-button" id="install-app-button" type="button" aria-label="Install KUKU RADIO" hidden>
-    <span class="quick-icon-fallback" aria-hidden="true">＋</span><span class="label">Install App</span>
-  </button>
-</nav>
-<div class="install-hint" id="install-hint" role="status" aria-live="polite" hidden></div>
-
-<main>
-
-  <header class="station-id">
-    <div class="status-row">
-      <div class="on-air"><span class="on-air-dot" aria-hidden="true"></span> On air</div>
-      <div class="live-count" aria-live="off">
-        <span class="live-dot" aria-hidden="true"></span><span id="live-count-number">--</span>&nbsp;listening&nbsp;now
-      </div>
+<!-- Top Studio Bar -->
+<header class="studio-topbar">
+  <div class="brand-cluster">
+    <div class="status-badges">
+      <span class="on-air"><span class="on-air-dot" aria-hidden="true"></span> ON AIR</span>
+      <span class="live-count" aria-live="off">
+        <span class="live-dot" aria-hidden="true"></span>
+        <span id="live-count-number">--</span>&nbsp;listening
+      </span>
     </div>
-    <h1 class="wordmark">KUKU RADIO</h1>
-    <p class="tagline">on air, just for us</p>
-  </header>
-
-  <div class="dial-console" id="dial-console">
-    <svg id="dial-svg" viewBox="0 0 400 225" aria-hidden="true">
-      <defs>
-        <radialGradient id="veilGradient" cx="50%" cy="90%" r="70%">
-          <stop id="veil-stop-1" offset="0%" stop-color="#170812" stop-opacity="0.9"/>
-          <stop id="veil-stop-2" offset="100%" stop-color="#170812" stop-opacity="0"/>
-        </radialGradient>
-      </defs>
-      <path class="dial-arc" d="M 55.1 171.2 A 150 150 0 0 1 344.9 171.2"></path>
-      <g id="ticks-group"></g>
-      <rect class="dial-veil" x="0" y="0" width="400" height="225"></rect>
-      <g id="needle-group">
-        <line class="needle" x1="200" y1="210" x2="200" y2="72"></line>
-        <circle class="needle-hub" cx="200" cy="210" r="6"></circle>
-      </g>
-    </svg>
+    <div class="brand-titles">
+      <h1 class="wordmark">KUKU RADIO</h1>
+      <span class="tagline">on air, just for us</span>
+    </div>
   </div>
 
-  <div class="frequency-row" id="frequency-row" role="group" aria-label="Radio frequencies"></div>
+  <!-- Quick Links & Utilities -->
+  <nav class="quick-links" aria-label="Music platforms and actions">
+    <a class="quick-link" href="https://music.youtube.com/" target="_blank" rel="noopener noreferrer" title="YouTube Music">
+      <img class="quick-icon-img" src="icons/youtube-music.svg" alt="" loading="lazy" onerror="this.outerHTML='&lt;span class=&quot;quick-icon-fallback&quot;&gt;&#9654;&lt;/span&gt;'">
+      <span class="label">YT Music</span>
+    </a>
+    <a class="quick-link" href="https://open.spotify.com/" target="_blank" rel="noopener noreferrer" title="Spotify">
+      <img class="quick-icon-img" src="icons/spotify.svg" alt="" loading="lazy" onerror="this.outerHTML='&lt;span class=&quot;quick-icon-fallback&quot;&gt;&#9679;&lt;/span&gt;'">
+      <span class="label">Spotify</span>
+    </a>
+    <a class="quick-link" href="https://www.jiosaavn.com/" target="_blank" rel="noopener noreferrer" title="JioSaavn">
+      <img class="quick-icon-img" src="icons/jiosaavn.svg" alt="" loading="lazy" onerror="this.outerHTML='&lt;span class=&quot;quick-icon-fallback&quot;&gt;&#9834;&lt;/span&gt;'">
+      <span class="label">JioSaavn</span>
+    </a>
+    <a class="quick-link" id="song-request-link" href="#" target="_blank" rel="noopener noreferrer" title="Request a Song on WhatsApp">
+      <img class="quick-icon-img" src="icons/whatsapp.svg" alt="" loading="lazy" onerror="this.outerHTML='&lt;span class=&quot;quick-icon-fallback&quot;&gt;&#9742;&lt;/span&gt;'">
+      <span class="label">Request</span>
+    </a>
+    <button class="quick-link install-button" id="install-app-button" type="button" aria-label="Install KUKU RADIO" hidden>
+      <span class="quick-icon-fallback" aria-hidden="true">＋</span>
+      <span class="label">Install</span>
+    </button>
+  </nav>
+</header>
 
-  <section class="now-playing" aria-label="Now playing">
-    <div class="track-meta">
-      <div class="track-meta-text">
-        <div class="freq-label" id="np-freq-label">88.1 · Late Night 90s</div>
-        <div class="track-title empty" id="np-title" aria-live="polite">Tuning in…</div>
-        <div class="track-subtitle" id="np-subtitle" hidden></div>
+<div class="install-hint" id="install-hint" role="status" aria-live="polite" hidden></div>
+<div class="toast-notice" id="toast-notice" role="status" aria-live="polite" hidden></div>
+
+<!-- Main Split-Studio Workspace -->
+<main class="studio-grid">
+
+  <!-- LEFT COLUMN: Turntable Deck, Tuner Dial & Master Controls -->
+  <section class="deck-column" aria-label="Player deck and frequency tuner">
+
+    <!-- Frequency Selector Pills -->
+    <div class="frequency-row" id="frequency-row" role="group" aria-label="Radio frequencies"></div>
+
+    <!-- Main Glass Player Card -->
+    <div class="now-playing">
+
+      <!-- Turntable & Analog Dial Row -->
+      <div class="turntable-stage">
+        <div class="vinyl-platter" id="vinyl-platter">
+          <div class="vinyl-disc" id="vinyl-disc">
+            <div class="vinyl-grooves"></div>
+            <div class="vinyl-label" id="vinyl-label">
+              <span class="vinyl-freq" id="vinyl-freq">88.1</span>
+            </div>
+          </div>
+          <div class="tonearm" id="tonearm" aria-hidden="true"></div>
+        </div>
+
+        <!-- Analog SVG Dial -->
+        <div class="dial-console" id="dial-console">
+          <svg id="dial-svg" viewBox="0 0 400 225" aria-hidden="true">
+            <defs>
+              <radialGradient id="veilGradient" cx="50%" cy="90%" r="70%">
+                <stop id="veil-stop-1" offset="0%" stop-color="#170812" stop-opacity="0.9"/>
+                <stop id="veil-stop-2" offset="100%" stop-color="#170812" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+            <path class="dial-arc" d="M 55.1 171.2 A 150 150 0 0 1 344.9 171.2"></path>
+            <g id="ticks-group"></g>
+            <rect class="dial-veil" x="0" y="0" width="400" height="225"></rect>
+            <g id="needle-group">
+              <line class="needle" x1="200" y1="210" x2="200" y2="72"></line>
+              <circle class="needle-hub" cx="200" cy="210" r="6"></circle>
+            </g>
+          </svg>
+        </div>
       </div>
-      <!-- 5-bar spectrum equalizer matching animations.css -->
-      <div class="eq-bars" id="eq-bars" aria-hidden="true">
-        <span></span><span></span><span></span><span></span><span></span>
+
+      <!-- Track Metadata + Favorite + Equalizer -->
+      <div class="track-meta">
+        <div class="track-meta-text">
+          <div class="freq-label" id="np-freq-label">88.1 · Late Night 90s</div>
+          <div class="track-title empty" id="np-title" aria-live="polite">Tuning in…</div>
+          <div class="track-subtitle" id="np-subtitle" hidden></div>
+        </div>
+
+        <div class="meta-actions">
+          <button type="button" class="icon-action-btn" id="btn-favorite" aria-label="Favorite this song" title="Save to Favorites (F)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+          </button>
+          <button type="button" class="icon-action-btn" id="btn-share" aria-label="Share current track" title="Share track">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+            </svg>
+          </button>
+          <div class="eq-bars" id="eq-bars" aria-hidden="true">
+            <span></span><span></span><span></span><span></span><span></span>
+          </div>
+        </div>
       </div>
-    </div>
 
-    <div class="progress-row">
-      <span class="time current" id="time-current">0:00</span>
-      <div id="progress-bar" role="slider" tabindex="0" aria-label="Seek progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-        <div id="progress-fill"></div>
+      <!-- Interactive Seek Scrubber -->
+      <div class="progress-row">
+        <span class="time current" id="time-current">0:00</span>
+        <div id="progress-bar" role="slider" tabindex="0" aria-label="Seek progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+          <div id="progress-fill"></div>
+        </div>
+        <span class="time" id="time-duration">0:00</span>
       </div>
-      <span class="time" id="time-duration">0:00</span>
-    </div>
 
-    <div class="transport">
-      <button id="btn-prev" type="button" aria-label="Previous track" disabled>
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
-      </button>
-      <button id="btn-play" type="button" aria-label="Play" disabled>
-        <svg id="play-icon" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
-      </button>
-      <button id="btn-next" type="button" aria-label="Next track" disabled>
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 6h2v12h-2zM6 6l8.5 6L6 18z"/></svg>
-      </button>
-    </div>
+      <!-- Primary Transport + Repeat & Sleep Timer -->
+      <div class="transport">
+        <button id="btn-repeat" type="button" class="util-btn" aria-label="Repeat mode: Off" title="Toggle Repeat One (R)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/>
+            <polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/>
+          </svg>
+          <span class="repeat-badge" id="repeat-badge" hidden>1</span>
+        </button>
 
-    <div class="volume-row">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" class="volume-icon" aria-hidden="true"><path d="M3 10v4h4l5 5V5L7 10H3zm13.5 2c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
-      <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="0.8" aria-label="Volume">
+        <button id="btn-prev" type="button" aria-label="Previous track" title="Previous (Left)" disabled>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
+        </button>
+
+        <button id="btn-play" type="button" aria-label="Play" title="Play / Pause (Space)" disabled>
+          <svg id="play-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        </button>
+
+        <button id="btn-next" type="button" aria-label="Next track" title="Next (Right)" disabled>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M16 6h2v12h-2zM6 6l8.5 6L6 18z"/></svg>
+        </button>
+
+        <button id="btn-sleep" type="button" class="util-btn" aria-label="Sleep timer: Off" title="Sleep Timer">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+          <span class="sleep-label" id="sleep-label" hidden></span>
+        </button>
+      </div>
+
+      <!-- Volume Bar + Up Next Preview Pill -->
+      <div class="deck-footer">
+        <div class="volume-row">
+          <button type="button" id="btn-mute" class="mute-btn" aria-label="Mute / Unmute" title="Mute (M)">
+            <svg id="volume-icon" width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M3 10v4h4l5 5V5L7 10H3zm13.5 2c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/>
+            </svg>
+          </button>
+          <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="0.8" aria-label="Volume">
+        </div>
+
+        <button type="button" class="up-next-pill" id="up-next-btn" title="Click to skip to this song" hidden>
+          <span class="up-next-tag">UP NEXT</span>
+          <span class="up-next-title" id="up-next-title">—</span>
+        </button>
+      </div>
+
     </div>
   </section>
 
-  <section class="tracklist-section" aria-label="Station tracklist">
-    <div class="tracklist-heading">On this frequency</div>
-    <ol id="tracklist"></ol>
-  </section>
+  <!-- RIGHT COLUMN: Searchable & Filterable Tracklist Library -->
+  <section class="library-column tracklist-section" aria-label="Station tracklist">
+    <div class="library-card">
+      <div class="library-header">
+        <div class="tracklist-heading" id="tracklist-heading">On this frequency</div>
+        <div class="library-controls">
+          <div class="search-box">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input type="search" id="track-search" placeholder="Filter songs… (/)" aria-label="Filter songs on this frequency" autocomplete="off">
+          </div>
+          <button type="button" class="filter-fav-btn" id="btn-filter-fav" aria-pressed="false" title="Show Favorites Only">
+            ♥ <span id="fav-count">0</span>
+          </button>
+        </div>
+      </div>
 
-  <footer>&#8258; private frequency &#8258; &nbsp;·&nbsp; installable web app</footer>
+      <ol id="tracklist"></ol>
+    </div>
+  </section>
 
 </main>
+
+<footer>&#8258; KUKU RADIO STUDIO &#8258; &nbsp;·&nbsp; Space: Play &nbsp;·&nbsp; M: Mute &nbsp;·&nbsp; F: Favorite &nbsp;·&nbsp; /: Search</footer>
 
 <audio id="audio-player" preload="metadata"></audio>
 
