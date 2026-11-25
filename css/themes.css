@@ -1,36 +1,26 @@
 /* =========================================================================
    KUKU RADIO — design tokens (css/themes.css)
-   -------------------------------------------------------------------------
-   Single source of truth for color, type, spacing, radius, motion and
-   z-index. Nothing in this file selects a component; it only declares
-   custom properties.
-   ========================================================================= */
-
-/* =========================================================================
-   1. GLOBAL TOKENS — identical for every theme
    ========================================================================= */
 
 :root {
   color-scheme: dark;
 
-  /* ---------- Type ---------------------------------------------------- */
   --font-display: 'Fraunces', Georgia, serif;
   --font-ui: 'Plus Jakarta Sans', 'Noto Sans Devanagari', 'Noto Sans Gurmukhi',
              system-ui, -apple-system, sans-serif;
   --font-mono: 'Space Mono', ui-monospace, 'SFMono-Regular', monospace;
 
-  --fs-wordmark: clamp(2.05rem, 8.5vw, 3.6rem);
-  --fs-title:    clamp(1.15rem, 3.4vw, 1.32rem);
+  --fs-wordmark: clamp(1.55rem, 4vw, 2.25rem);
+  --fs-title:    clamp(1.18rem, 2.8vw, 1.4rem);
   --fs-body:     0.9rem;
-  --fs-sm:       0.83rem;
+  --fs-sm:       0.82rem;
   --fs-xs:       0.74rem;
   --fs-mono:     0.7rem;
 
   --tracking-display: -0.02em;
-  --tracking-mono:    0.14em;
-  --tracking-caps:    0.22em;
+  --tracking-mono:    0.12em;
+  --tracking-caps:    0.18em;
 
-  /* ---------- Space (4px base) ---------------------------------------- */
   --s-1: 0.25rem;
   --s-2: 0.5rem;
   --s-3: 0.75rem;
@@ -39,22 +29,19 @@
   --s-6: 1.5rem;
   --s-8: 2rem;
   --s-10: 2.5rem;
-  --s-12: 3rem;
 
-  /* ---------- Radius -------------------------------------------------- */
   --r-xs: 8px;
   --r-sm: 12px;
   --r-md: 14px;
-  --r-lg: 16px;
-  --r-xl: 20px;
+  --r-lg: 18px;
+  --r-xl: 24px;
   --r-pill: 999px;
 
-  /* ---------- Motion -------------------------------------------------- */
   --t-press:  0.15s;
   --t-hover:  0.25s;
   --t-enter:  0.4s;
   --t-theme:  0.9s;
-  --t-bg-in:  2.6s;
+  --t-bg-in:  2.4s;
   --t-bg-pan: 10s;
 
   --ease-std:   ease;
@@ -62,191 +49,130 @@
   --ease-bg:    cubic-bezier(0.45, 0, 0.2, 1);
   --ease-drift: cubic-bezier(0.25, 0.1, 0.25, 1);
 
-  /* ---------- Z-index ------------------------------------------------- */
   --z-backdrop:  0;
   --z-sky:       2;
   --z-main:      3;
-  --z-tracklist: 4;
-  --z-card:      5;
-  --z-rail:      50;
-  --z-hint:      51;
+  --z-topbar:    20;
+  --z-hint:      60;
 
-  /* ---------- Metrics ------------------------------------------------- */
-  --content-max: 720px;
-  --dial-max: 420px;
-  --rail-w: 190px;
-  --tap-min: 44px;
+  --studio-max: 1180px;
+  --tap-min: 42px;
   --focus-width: 2px;
 }
 
-
-/* =========================================================================
-   2. THEME SEEDS — 7 colors each
-   ========================================================================= */
-
-/* Late Night 90s — rose-red / coral-orange / gold */
+/* 1. Late Night 90s — Rose / Coral */
 body,
 body[data-theme="rose"] {
   --bg-deep: #170812;
   --bg-deep-rgb: 23, 8, 18;
   --bg-mid: #3d0f30;
   --bg-high: #5c1442;
-
   --accent: #ff3f6c;
   --accent-rgb: 255, 63, 108;
   --accent-2: #ff8a3d;
   --accent-2-rgb: 255, 138, 61;
   --accent-3: #ffcf5c;
-
   --cream: #fff6f0;
   --cream-rgb: 255, 246, 240;
 }
 
-/* Missing You — ice blue / cyan */
+/* 2. Missing You — Ice Blue / Cyan */
 body[data-theme="original"] {
   --bg-deep: #0a141f;
   --bg-deep-rgb: 10, 20, 31;
   --bg-mid: #13293d;
   --bg-high: #1e415c;
-
   --accent: #4fc3f7;
   --accent-rgb: 79, 195, 247;
   --accent-2: #cfeaf7;
   --accent-2-rgb: 207, 234, 247;
   --accent-3: #9fb9c9;
-
   --cream: #f4f9fb;
   --cream-rgb: 244, 249, 251;
 }
 
-/* Bhojpuri Melody — magenta / lime */
+/* 3. Bhojpuri Melody — Neon Magenta / Lime */
 body[data-theme="sky"] {
   --bg-deep: #160b24;
   --bg-deep-rgb: 22, 11, 36;
   --bg-mid: #3a124f;
   --bg-high: #671b70;
-
   --accent: #ff4fd8;
   --accent-rgb: 255, 79, 216;
   --accent-2: #8cff4f;
   --accent-2-rgb: 140, 255, 79;
   --accent-3: #e2b7ff;
-
   --cream: #fff5ff;
   --cream-rgb: 255, 245, 255;
 }
 
-/* Punjabi Funk — amber / dusty pink / lavender */
+/* 4. Punjabi Funk — Warm Amber / Dusty Rose */
 body[data-theme="funky"] {
   --bg-deep: #0f0e1a;
   --bg-deep-rgb: 15, 14, 26;
   --bg-mid: #241f42;
   --bg-high: #2e2555;
-
   --accent: #f2b166;
   --accent-rgb: 242, 177, 102;
   --accent-2: #e8879a;
   --accent-2-rgb: 232, 135, 154;
   --accent-3: #c9b6e4;
-
   --cream: #f7ede0;
   --cream-rgb: 247, 237, 224;
 }
 
-/* Party Vibes — electric teal / coral / gold */
+/* 5. Party Vibes — Electric Teal / Coral */
 body[data-theme="party"] {
   --bg-deep: #051a1c;
   --bg-deep-rgb: 5, 26, 28;
   --bg-mid: #0d3438;
   --bg-high: #124a4f;
-
   --accent: #2dd4bf;
   --accent-rgb: 45, 212, 191;
   --accent-2: #ff6b6b;
   --accent-2-rgb: 255, 107, 107;
   --accent-3: #ffc857;
-
   --cream: #f0fffd;
   --cream-rgb: 240, 255, 253;
 }
 
-/* Universal Destiny — tan / warm grey */
+/* 6. Universal Destiny — Warm Espresso / Gold */
 body[data-theme="brown"] {
   --bg-deep: #150f0c;
   --bg-deep-rgb: 21, 15, 12;
   --bg-mid: #2c1f17;
   --bg-high: #40291b;
-
   --accent: #cf9a5c;
   --accent-rgb: 207, 154, 92;
   --accent-2: #b7a68f;
   --accent-2-rgb: 183, 166, 143;
   --accent-3: #9c8f80;
-
   --cream: #f4efe7;
   --cream-rgb: 244, 239, 231;
 }
 
-
-/* =========================================================================
-   3. DERIVED TOKENS — computed from seeds
-   ========================================================================= */
-
+/* Derived Tokens */
 body {
-  /* Text */
   --text:       var(--cream);
   --text-dim:   color-mix(in srgb, var(--cream) 78%, transparent);
-  --text-faint: color-mix(in srgb, var(--cream) 58%, transparent);
+  --text-faint: color-mix(in srgb, var(--cream) 55%, transparent);
   --on-accent:  var(--bg-deep);
 
-  /* Accent tints */
   --accent-soft:  color-mix(in srgb, var(--accent) 36%, transparent);
-  --accent-faint: color-mix(in srgb, var(--accent) 18%, transparent);
+  --accent-faint: color-mix(in srgb, var(--accent) 16%, transparent);
 
-  /* Glass surfaces */
-  --surface:           color-mix(in srgb, var(--cream) 7%, transparent);
-  --surface-solid:     color-mix(in oklab, var(--bg-deep) 92%, black);
-  --surface-border:    color-mix(in srgb, var(--accent) 22%, transparent);
-  --surface-highlight: color-mix(in srgb, var(--cream) 11%, transparent);
+  --surface:           color-mix(in srgb, var(--bg-deep) 62%, rgba(255, 255, 255, 0.08));
+  --surface-elevated:  color-mix(in srgb, var(--cream) 9%, transparent);
+  --surface-solid:     color-mix(in oklab, var(--bg-deep) 94%, black);
+  --surface-border:    color-mix(in srgb, var(--accent) 24%, rgba(255, 255, 255, 0.08));
+  --surface-highlight: color-mix(in srgb, var(--cream) 14%, transparent);
 
-  /* Elevation */
-  --shadow-tint: color-mix(in oklab, var(--bg-deep) 62%, black);
-  --shadow-key:  color-mix(in srgb, var(--shadow-tint) 55%, transparent);
-  --shadow-card: 0 15px 45px var(--shadow-key);
-  --shadow-rail: 0 10px 30px color-mix(in srgb, var(--shadow-tint) 40%, transparent);
-  --shadow-glow: 0 8px 26px var(--accent-soft);
+  --shadow-tint: color-mix(in oklab, var(--bg-deep) 65%, black);
+  --shadow-key:  color-mix(in srgb, var(--shadow-tint) 60%, transparent);
+  --shadow-card: 0 20px 50px var(--shadow-key);
+  --shadow-glow: 0 8px 28px var(--accent-soft);
 
-  /* Focus */
   --focus-ring: var(--focus-width) solid var(--accent);
-}
-
-@supports not (color: color-mix(in srgb, red, blue)) {
-  body {
-    --text-dim: rgba(var(--cream-rgb), 0.78);
-    --text-faint: rgba(var(--cream-rgb), 0.58);
-    --accent-soft: rgba(var(--accent-rgb), 0.36);
-    --accent-faint: rgba(var(--accent-rgb), 0.18);
-    --surface: rgba(var(--cream-rgb), 0.07);
-    --surface-solid: rgba(var(--bg-deep-rgb), 0.96);
-    --surface-border: rgba(var(--accent-rgb), 0.22);
-    --surface-highlight: rgba(var(--cream-rgb), 0.11);
-    --shadow-key: rgba(var(--bg-deep-rgb), 0.62);
-  }
-}
-
-
-/* =========================================================================
-   4. PREFERENCE OVERRIDES
-   ========================================================================= */
-
-@media (prefers-contrast: more) {
-  body {
-    --text-dim: var(--cream);
-    --text-faint: color-mix(in srgb, var(--cream) 82%, transparent);
-    --surface: color-mix(in srgb, var(--cream) 14%, transparent);
-    --surface-border: color-mix(in srgb, var(--accent) 55%, transparent);
-    --focus-width: 3px;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
