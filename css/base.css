@@ -1,12 +1,5 @@
 /* =========================================================================
    KUKU RADIO — base (css/base.css)
-   -------------------------------------------------------------------------
-   Reset, document setup, registered @property color interpolation,
-   page backdrop, and the responsive layout shell.
-   ========================================================================= */
-
-/* =========================================================================
-   1. RESET
    ========================================================================= */
 
 *,
@@ -28,71 +21,13 @@ video {
   max-width: 100%;
 }
 
-
-/* =========================================================================
-   2. REGISTERED COLOR PROPERTIES (Smooth Theme Interpolation)
-   ========================================================================= */
-
-@property --bg-deep {
-  syntax: '<color>';
-  inherits: true;
-  initial-value: #170812;
-}
-@property --bg-mid {
-  syntax: '<color>';
-  inherits: true;
-  initial-value: #3d0f30;
-}
-@property --bg-high {
-  syntax: '<color>';
-  inherits: true;
-  initial-value: #5c1442;
-}
-@property --accent {
-  syntax: '<color>';
-  inherits: true;
-  initial-value: #ff3f6c;
-}
-@property --accent-2 {
-  syntax: '<color>';
-  inherits: true;
-  initial-value: #ff8a3d;
-}
-@property --accent-3 {
-  syntax: '<color>';
-  inherits: true;
-  initial-value: #ffcf5c;
-}
-@property --cream {
-  syntax: '<color>';
-  inherits: true;
-  initial-value: #fff6f0;
-}
-@property --scrim-top {
-  syntax: '<color>';
-  inherits: true;
-  initial-value: rgba(23, 8, 18, 0.44);
-}
-@property --scrim-mid {
-  syntax: '<color>';
-  inherits: true;
-  initial-value: rgba(23, 8, 18, 0.24);
-}
-@property --scrim-bottom {
-  syntax: '<color>';
-  inherits: true;
-  initial-value: rgba(23, 8, 18, 0.60);
-}
-@property --scrim-centre {
-  syntax: '<color>';
-  inherits: true;
-  initial-value: rgba(23, 8, 18, 0.05);
-}
-
-
-/* =========================================================================
-   3. DOCUMENT & BODY
-   ========================================================================= */
+@property --bg-deep { syntax: '<color>'; inherits: true; initial-value: #170812; }
+@property --bg-mid  { syntax: '<color>'; inherits: true; initial-value: #3d0f30; }
+@property --bg-high { syntax: '<color>'; inherits: true; initial-value: #5c1442; }
+@property --accent  { syntax: '<color>'; inherits: true; initial-value: #ff3f6c; }
+@property --accent-2{ syntax: '<color>'; inherits: true; initial-value: #ff8a3d; }
+@property --accent-3{ syntax: '<color>'; inherits: true; initial-value: #ffcf5c; }
+@property --cream   { syntax: '<color>'; inherits: true; initial-value: #fff6f0; }
 
 html {
   min-height: 100%;
@@ -102,45 +37,34 @@ html {
   overflow-x: clip;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
-  text-rendering: optimizeLegibility;
 }
 
 body {
   width: 100%;
   min-height: 100vh;
-  min-height: 100svh;
   min-height: 100dvh;
-
   overflow-x: hidden;
   overflow-x: clip;
-
   position: relative;
+  display: flex;
+  flex-direction: column;
   color: var(--text);
   font-family: var(--font-ui);
   font-size: var(--fs-body);
   line-height: 1.5;
-  font-optical-sizing: auto;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 
-  --accent-wash: color-mix(in srgb, var(--accent) 12%, transparent);
+  --accent-wash: color-mix(in srgb, var(--accent) 14%, transparent);
   --accent-2-wash: color-mix(in srgb, var(--accent-2) 14%, transparent);
 
   background-color: var(--bg-deep);
   background-image:
-    radial-gradient(ellipse 90% 60% at 50% -10%,
-      var(--bg-high) 0%, transparent 60%),
-    radial-gradient(ellipse 70% 50% at 85% 15%,
-      var(--accent-2-wash) 0%, transparent 55%),
-    radial-gradient(ellipse 60% 40% at 8% 96%,
-      var(--accent-wash) 0%, transparent 55%),
-    linear-gradient(180deg,
-      var(--bg-deep) 0%, var(--bg-mid) 55%, var(--bg-deep) 100%);
+    radial-gradient(ellipse 90% 60% at 50% -10%, var(--bg-high) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 50% at 85% 15%, var(--accent-2-wash) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 40% at 8% 96%, var(--accent-wash) 0%, transparent 55%),
+    linear-gradient(180deg, var(--bg-deep) 0%, var(--bg-mid) 55%, var(--bg-deep) 100%);
 
-  touch-action: pan-y;
-  overscroll-behavior-x: none;
   -webkit-tap-highlight-color: transparent;
-
   transition:
     color      var(--t-theme) var(--ease-std),
     --bg-deep  var(--t-theme) var(--ease-std),
@@ -152,37 +76,19 @@ body {
     --cream    var(--t-theme) var(--ease-std);
 }
 
-@supports not (color: color-mix(in srgb, red, blue)) {
-  body {
-    --accent-wash: rgba(var(--accent-rgb), 0.12);
-    --accent-2-wash: rgba(var(--accent-2-rgb), 0.14);
-  }
-}
-
-
-/* =========================================================================
-   4. INTERACTIVE DEFAULTS
-   ========================================================================= */
-
 button,
 input,
 select,
 textarea,
 a {
   font: inherit;
-  letter-spacing: inherit;
   color: inherit;
   touch-action: manipulation;
-}
-
-button {
-  -webkit-font-smoothing: inherit;
 }
 
 :focus-visible {
   outline: var(--focus-ring);
   outline-offset: 2px;
-  border-radius: inherit;
 }
 
 :focus:not(:focus-visible) {
@@ -194,108 +100,41 @@ button {
   color: var(--text);
 }
 
-
-/* =========================================================================
-   5. SCROLLBAR
-   ========================================================================= */
-
 @supports (scrollbar-color: red blue) {
-  html {
+  * {
     scrollbar-color: var(--surface-border) transparent;
     scrollbar-width: thin;
   }
 }
 
-
-/* =========================================================================
-   6. LAYOUT SHELL
-   ========================================================================= */
-
-main {
+/* Studio Workspace Grid */
+.studio-grid {
   position: relative;
   z-index: var(--z-main);
-  width: min(var(--content-max), calc(100% - var(--s-8)));
+  width: min(var(--studio-max), calc(100% - var(--s-6)));
   margin-inline: auto;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-
-  padding-block: max(var(--s-8), env(safe-area-inset-top))
-                 calc(var(--s-4) + env(safe-area-inset-bottom));
-  padding-inline: max(var(--s-4), env(safe-area-inset-left))
-                  max(var(--s-4), env(safe-area-inset-right));
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1.08fr 0.92fr;
+  gap: var(--s-6);
+  align-items: start;
+  padding-block: var(--s-3) var(--s-6);
 }
 
-@media (max-width: 600px) {
-  main {
-    padding-block-start: max(var(--s-5), env(safe-area-inset-top));
-  }
-}
-
-
-/* =========================================================================
-   7. INPUT ERGONOMICS
-   ========================================================================= */
-
-@media (pointer: coarse) {
-  .freq-btn,
-  .quick-link,
-  .install-button,
-  .transport button,
-  #tracklist li button {
-    min-height: var(--tap-min);
+@media (max-width: 960px) {
+  .studio-grid {
+    grid-template-columns: 1fr;
+    max-width: 640px;
   }
 }
 
-@media (hover: none) {
-  .freq-btn:hover,
-  .quick-link:hover,
-  .transport button:hover,
-  #tracklist li button:hover {
-    border-color: var(--surface-border);
-    background: none;
-    transform: none;
-  }
-}
-
-
-/* =========================================================================
-   8. PREFERENCE OVERRIDES & PRINT
-   ========================================================================= */
-
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-  body {
-    transition: none;
-  }
-}
-
-@media print {
-  html,
-  body {
-    background: #fff;
-    color: #000;
-    min-height: 0;
-  }
-
-  main {
-    width: auto;
-    max-width: none;
-    padding: 0;
-    display: block;
-  }
-
-  #station-background,
-  #sky,
-  .quick-links,
-  .install-hint,
-  .dial-console,
-  .transport,
-  .volume-row,
-  .progress-row {
-    display: none !important;
-  }
+footer {
+  position: relative;
+  z-index: var(--z-main);
+  padding: var(--s-4) var(--s-4) max(var(--s-5), env(safe-area-inset-bottom));
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  color: var(--text-faint);
 }
