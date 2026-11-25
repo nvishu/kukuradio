@@ -400,6 +400,9 @@ export function initPlayer(stations) {
     history = [];
     historyPos = -1;
     bag = [];
+         searchQuery = '';
+    if (trackSearch) trackSearch.value = '';
+
 
     updateNeedle(index, stations.length);
     updateDialLabels(index);
