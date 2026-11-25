@@ -36,9 +36,9 @@
   z-index: 2;
   background:
     linear-gradient(180deg,
-      color-mix(in srgb, var(--bg-deep) 55%, transparent) 0%,
-      color-mix(in srgb, var(--bg-deep) 35%, transparent) 45%,
-      color-mix(in srgb, var(--bg-deep) 78%, transparent) 100%);
+      color-mix(in srgb, var(--bg-deep) 28%, transparent) 0%,
+      color-mix(in srgb, var(--bg-deep) 15%, transparent) 45%,
+      color-mix(in srgb, var(--bg-deep) 48%, transparent) 100%);
 }
 
 .station-bg-error {
