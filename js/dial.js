@@ -1,19 +1,17 @@
 /* =========================================================================
-   KUKU RADIO — SVG tuning dial & frequency buttons
-   =========================================================================
-   Now XSS-safe: dynamic values are sanitised with escapeHtml() before
-   being injected via innerHTML, and no string is ever taken from user
-   input beyond what validateStations() allowed through.
+   KUKU RADIO — js/dial.js
+   -------------------------------------------------------------------------
+   Builds and updates the SVG tuning dial and the frequency-button row.
+   Pure presentation: it never touches audio or track state directly —
+   player.js calls into these functions when the active station changes.
    ========================================================================= */
-
-import { escapeHtml } from './utils.js';
 
 const CX = 200, CY = 210, R_OUTER = 150, R_MINOR_IN = 145, R_MAJOR_IN = 130, R_LABEL = 113;
 const ANGLE_START = 165, ANGLE_END = 15;
 
-const ticksGroup  = document.getElementById('ticks-group');
+const ticksGroup = document.getElementById('ticks-group');
 const needleGroup = document.getElementById('needle-group');
-const freqRow     = document.getElementById('frequency-row');
+const freqRow = document.getElementById('frequency-row');
 
 let cachedTickLabels = [];
 let cachedTickMajors = [];
@@ -36,26 +34,26 @@ export function buildDial(stations, onSelect) {
   let svg = '';
   const minorCount = 23;
   for (let i = 0; i < minorCount; i++) {
-    const a  = ANGLE_START - (i * (ANGLE_START - ANGLE_END)) / (minorCount - 1);
+    const a = ANGLE_START - (i * (ANGLE_START - ANGLE_END)) / (minorCount - 1);
     const p1 = polar(CX, CY, R_MINOR_IN, a);
     const p2 = polar(CX, CY, R_OUTER, a);
     svg += `<line class="tick-minor" x1="${p1.x.toFixed(1)}" y1="${p1.y.toFixed(1)}" x2="${p2.x.toFixed(1)}" y2="${p2.y.toFixed(1)}"/>`;
   }
 
   stations.forEach((s, i) => {
-    const a  = angleForIndex(i, stations.length);
+    const a = angleForIndex(i, stations.length);
     const p1 = polar(CX, CY, R_MAJOR_IN, a);
     const p2 = polar(CX, CY, R_OUTER, a);
     const lp = polar(CX, CY, R_LABEL, a);
-    const freq = escapeHtml(s.freq);
     svg += `<line class="tick-major" data-idx="${i}" x1="${p1.x.toFixed(1)}" y1="${p1.y.toFixed(1)}" x2="${p2.x.toFixed(1)}" y2="${p2.y.toFixed(1)}"/>`;
-    svg += `<text class="tick-label" data-idx="${i}" style="cursor:pointer" x="${lp.x.toFixed(1)}" y="${(lp.y + 4).toFixed(1)}">${freq}</text>`;
+    svg += `<text class="tick-label" data-idx="${i}" style="cursor:pointer" x="${lp.x.toFixed(1)}" y="${(lp.y + 4).toFixed(1)}">${s.freq}</text>`;
   });
 
   ticksGroup.innerHTML = svg;
   cachedTickLabels = Array.from(ticksGroup.querySelectorAll('.tick-label'));
   cachedTickMajors = Array.from(ticksGroup.querySelectorAll('.tick-major'));
 
+  // Allow clicking directly on dial frequency labels to tune
   if (typeof onSelect === 'function') {
     ticksGroup.onclick = (e) => {
       const target = e.target.closest('[data-idx]');
@@ -111,8 +109,12 @@ export function jumpNeedle(index, total) {
 }
 
 export function updateDialLabels(activeIndex) {
-  cachedTickLabels.forEach((el, idx) => el.classList.toggle('active', idx === activeIndex));
-  cachedTickMajors.forEach((el, idx) => el.classList.toggle('active', idx === activeIndex));
+  cachedTickLabels.forEach((el, idx) => {
+    el.classList.toggle('active', idx === activeIndex);
+  });
+  cachedTickMajors.forEach((el, idx) => {
+    el.classList.toggle('active', idx === activeIndex);
+  });
 }
 
 export function updateFrequencyActive(activeIndex) {
