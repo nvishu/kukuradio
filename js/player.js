@@ -676,6 +676,37 @@ export function initPlayer(stations) {
     }
   });
 
+     // 1. Keyboard seeking when progress bar is focused
+  progressBar.addEventListener('keydown', (e) => {
+    if (!audio.duration) return;
+    if (e.key === 'ArrowRight') {
+      e.preventDefault();
+      audio.currentTime = Math.min(audio.currentTime + 5, audio.duration);
+    } else if (e.key === 'ArrowLeft') {
+      e.preventDefault();
+      audio.currentTime = Math.max(audio.currentTime - 5, 0);
+    } else if (e.key === 'Home') {
+      e.preventDefault();
+      audio.currentTime = 0;
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      audio.currentTime = audio.duration;
+    }
+  });
+
+  // 2. Lock-screen, CarPlay & Bluetooth headphone button handlers
+  if ('mediaSession' in navigator) {
+    navigator.mediaSession.setActionHandler('play', playAudio);
+    navigator.mediaSession.setActionHandler('pause', pauseAudio);
+    navigator.mediaSession.setActionHandler('previoustrack', prevTrack);
+    navigator.mediaSession.setActionHandler('nexttrack', nextTrack);
+    navigator.mediaSession.setActionHandler('seekto', (details) => {
+      if (details.seekTime !== undefined && audio.duration) {
+        audio.currentTime = details.seekTime;
+      }
+    });
+  }
+
   const savedStation = parseInt(localStorage.getItem(STORAGE_STATION_KEY) || '0', 10);
   const initialStation = (!isNaN(savedStation) && savedStation >= 0 && savedStation < stations.length)
     ? savedStation
